@@ -35,7 +35,7 @@
    if(!intent)return null;
    const raw=String(q||''),day=raw.match(/\b(\d{1,2})[\/.-](\d{1,2})[\/.-](20\d{2})\b/);
    const months={janeiro:0,fevereiro:1,marco:2,abril:3,maio:4,junho:5,julho:6,agosto:7,setembro:8,outubro:9,novembro:10,dezembro:11};
-   const month=Object.keys(months).find(k=>new RegExp('\\\\b'+k+'\\\\b').test(s));
+   const month=Object.keys(months).find(k=>new RegExp('\\b'+k+'\\b').test(s));
    const yearMatch=s.match(/\b(20\d{2})\b/),year=Number(yearMatch?.[1]||globalThis.__agentData?.source_updated_at?.slice(0,4)||new Date().getFullYear());
    if(!day&&!month&&!yearMatch)return null;
    let start,end,label;
@@ -44,7 +44,8 @@
    else{start=new Date(year,0,1);end=new Date(year+1,0,1);label=String(year)}
    const d=ds('ordens_bancarias');if(!d)return 'A base de ordens bancárias não está disponível.';
    const parseDate=v=>{const m=String(v||'').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(m)return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));const x=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return x?new Date(Number(x[1]),Number(x[2])-1,Number(x[3])):null};
-   const found=rs(d).filter(r=>{const dt=parseDate(r.data_pagamento||r.data);return dt&&dt>=start&&dt<end});\n   const rankMatch=s.match(/top\\s*(\\d+)/)||s.match(/\\b(\\d+)\\s+maiores?\\b/),rankIntent=/(top\\s*\\d+|maiores?\\b|maior valor|maior pagamento)/.test(s);\n   found.sort(rankIntent?(a,b)=>num(b.valor)-num(a.valor):(a,b)=>String(a.ob||'').localeCompare(String(b.ob||'')));
+   const found=rs(d).filter(r=>{const dt=parseDate(r.data_pagamento||r.data);return dt&&dt>=start&&dt<end});
+   const rankMatch=s.match(/top\s*(\d+)/)||s.match(/\b(\d+)\s+maiores?\b/),rankIntent=/(top\s*\d+|maiores?\b|maior valor|maior pagamento)/.test(s);\n   found.sort(rankIntent?(a,b)=>num(b.valor)-num(a.valor):(a,b)=>String(a.ob||'').localeCompare(String(b.ob||'')));
    if(!found.length)return 'Não encontrei ordens bancárias pagas em '+label+'.\n'+source(d);
    const limit=rankMatch?Math.min(50,Math.max(1,Number(rankMatch[1]))):(rankIntent?10:25),shown=found.slice(0,limit);
    const lines=shown.map((r,i)=>(i+1)+'. OB '+String(r.ob||'não informada')+' · '+brl(num(r.valor))+' · '+String(r.favorecido||'favorecido não informado')).join('\n');
