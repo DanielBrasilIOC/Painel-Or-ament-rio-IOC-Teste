@@ -1,5 +1,6 @@
 const DATA_URL='https://raw.githubusercontent.com/DanielBrasilIOC/brasil/agente-teste/data.json';
 let base=null;
+let loadError=null;
 const $=id=>document.getElementById(id);
 const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 const compact=s=>norm(s).replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();
