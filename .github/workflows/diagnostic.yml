@@ -6,7 +6,7 @@ on:
 jobs:
   diagnose:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,17 +23,21 @@ jobs:
           qa_status=$?
           node tests/stress-1000-v3.test.cjs > stress-1000-v3.log 2>&1
           stress_status=$?
+          node tests/stress-1000000.test.cjs > stress-1000000.log 2>&1
+          million_status=$?
           {
             echo "agent_regression=$agent_status"
             echo "human_questions=$human_status"
             echo "agente_qa=$qa_status"
             echo "stress_1000_v3=$stress_status"
+            echo "stress_1000000=$million_status"
           } | tee audit-status.log
           cat agent-regression.log
           cat human-questions.log
           cat agente-qa.log
           cat stress-1000-v3.log
-          if [ "$agent_status" -ne 0 ] || [ "$human_status" -ne 0 ] || [ "$qa_status" -ne 0 ] || [ "$stress_status" -ne 0 ]; then
+          cat stress-1000000.log
+          if [ "$agent_status" -ne 0 ] || [ "$human_status" -ne 0 ] || [ "$qa_status" -ne 0 ] || [ "$stress_status" -ne 0 ] || [ "$million_status" -ne 0 ]; then
             exit 1
           fi
       - name: Publicar evidências mesmo quando houver reprovação
@@ -48,3 +52,5 @@ jobs:
             agente-qa.log
             stress-1000-v3.log
             stress-1000-v3-report.json
+            stress-1000000.log
+            stress-1000000-report.json
