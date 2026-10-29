@@ -7,4 +7,4 @@ while(cases.length<1000){const d=data.datasets[cases.length%data.datasets.length
 `;
 const patched=src.replace("assert.equal(cases.length,1000,`geradas ${cases.length}`);",extra+"assert.equal(cases.length,1000,`geradas ${cases.length}`);");
 if(patched===src)throw new Error('ponto de inserção não encontrado');
-vm.runInNewContext(patched,{require,process,console,__dirname,Buffer,setTimeout,clearTimeout},{filename:'stress-1000-v3.test.cjs'});
+vm.runInNewContext(patched,{require,process,console,__dirname,Buffer,setTimeout,clearTimeout,fetch},{filename:'stress-1000-v3.test.cjs'});
