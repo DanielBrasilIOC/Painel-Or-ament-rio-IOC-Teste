@@ -214,11 +214,17 @@
   const hits=rs(d).filter(r=>c(r[nameKey])===c(name)),total=hits.reduce((sum,r)=>sum+val(r[valueKey]),0);
   return 'Total identificado para '+name+': '+brl(total)+'\nRegistros considerados: '+hits.length+'\n\nFonte: '+(d.source_name||d.title)+'\nBase atualizada em: '+(data()?.source_updated_at||'data não informada');
  };
+ const datasetFields=q=>{
+  const s=c(q);if(!/(campo|campos|coluna|colunas)/.test(s))return null;
+  const d=explicit(q);if(!d)return null;
+  const fields=[...new Set(rs(d).flatMap(r=>Object.keys(r||{})))];
+  return 'Campos disponíveis em '+d.title+':\n'+fields.join(', ')+'\nRegistros consultados: '+rs(d).length+'\nFonte: '+(d.source_name||d.title)+'\nBase atualizada em: '+(data()?.source_updated_at||'data não informada');
+ };
  const aggregate=q=>{
   const s=c(q);if(!/(quanto|total|soma|valor|saldo|financeiro|montante)/.test(s))return null;
   const d=explicit(q);if(!d||/por fonte|por origem|por vinculacao/.test(s))return null;
   return d.title+': '+brl(d.total)+'\nRegistros: '+(d.detail_count??rs(d).length)+'\nFonte: '+(d.source_name||d.title)+'\nBase atualizada em: '+(data()?.source_updated_at||'data não informada');
  };
- globalThis.answer=q=>countAnswer(q)||specificField(q)||personTotal(q)||aggregate(q)||previous(q);
+ globalThis.answer=q=>countAnswer(q)||specificField(q)||datasetFields(q)||personTotal(q)||aggregate(q)||previous(q);
  globalThis.__answer=globalThis.answer;
 })();
