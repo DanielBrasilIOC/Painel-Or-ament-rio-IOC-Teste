@@ -4,46 +4,32 @@ Data: 29/10/2026
 
 ## Escopo
 
-Auditoria funcional do agente de consultas do Painel Financeiro e Orçamentário IOC, exclusivamente no repositório de teste.
+Auditoria funcional do agente de consultas do Painel Financeiro e Orçamentário IOC, exclusivamente no repositório de teste `DanielBrasilIOC/Painel-Or-ament-rio-IOC-Teste`. A produção não foi alterada. A base consultada é o `data.json` público do repositório `DanielBrasilIOC/brasil`, em modo somente leitura.
 
-A base usada nos testes é o `data.json` publicado pelo dashboard. A produção não é alterada por este trabalho.
+## Alterações implementadas
 
-## Verificações automatizadas
+- Removidos os botões com perguntas predefinidas; o usuário digita livremente a pergunta.
+- Adicionado botão **Limpar pergunta**, que limpa o campo e apaga/oculta a resposta anterior.
+- Adicionado tratamento distinto para falha de conexão, pergunta sem correspondência e campo que não existe na base.
+- Preservada a vírgula decimal em valores monetários, para não confundir `R$ 200.000,01` com `R$ 200.000,00`.
+- Adicionada consulta por identificador de OB para recuperar o processo associado.
+- Evitado retornar o total geral da base quando a pergunta é sobre um favorecido que não foi localizado.
+- Melhorada a identificação de favorecidos em perguntas de confirmação de pagamento.
+- Mantidas as respostas com fonte e data da base sempre que aplicável.
 
-- Integridade dos 8 conjuntos de dados.
-- `detail_count` versus quantidade real de registros.
-- Total declarado versus soma dos registros.
-- Valores numéricos e ausência de valores negativos inesperados.
-- Saldo Financeiro.
-- Restos a Pagar.
-- Empenhos 2026.
-- Saldo Orçamentário.
-- Aguardando Repasse Orçamentário.
-- Ordens Bancárias Pagas.
-- Publicações Pagas.
-- Diárias Pagas.
-- Total de Jerônimo: R$ 11.191,28.
-- Total de Jerônimo por mês.
-- Última OB paga.
-- Última OB paga em período específico.
-- Maior pagamento e ranking dos 5 maiores pagamentos.
-- Filtro por valor acima de R$ 1.000.000,00.
-- Filtro mensal e conferência simultânea de valor e quantidade de registros.
-- Pergunta sem correspondência, garantindo que o agente não invente um valor.
+## Testes executados
 
-## Melhorias aplicadas após a auditoria
+O workflow de diagnóstico executou com sucesso os seguintes testes no commit `9efa81948ab81a86ba7c1674df23e37b99c1245e`:
 
-1. Consultas com `ordens bancárias` no plural passaram a ser identificadas corretamente.
-2. Perguntas do tipo `quanto foi pago em [mês]` passaram a selecionar a base de ordens bancárias.
-3. Filtros por mês/ano passaram a funcionar também em consultas por favorecido.
-4. A consulta da última OB passou a respeitar o período solicitado.
-5. A identificação de favorecido ficou mais restritiva para evitar correspondências parciais indevidas.
-6. O parser de valores foi ajustado para evitar interpretação incorreta de campos de data.
-7. Valores com separador de milhares passaram a ser tratados corretamente em filtros por limite.
-8. O parser passou a reconhecer consultas por ano completo.
+- `node --check agent.js`: aprovado.
+- `node tests/agent.test.cjs`: aprovado; 16 consultas de referência e verificação de integridade dos 8 conjuntos de dados, além de verificações de campo ausente, ausência de perguntas predefinidas, botão limpar e consulta por processo via OB.
+- `node tests/directoria.test.cjs`: aprovado; 5 consultas de linguagem natural com foco em pagamentos da Fiotec e validação de valores exatos com separador decimal brasileiro.
 
-## Resultado
+O workflow de publicação do GitHub Pages está sendo acompanhado separadamente; a aprovação dos testes de código não é, por si só, prova de que a interface já foi carregada no navegador. O agente continua baseado em regras determinísticas, então perguntas formuladas de maneiras não cobertas podem pedir reformulação em vez de adivinhar uma resposta.
 
-**16 consultas funcionais + validação de integridade dos 8 datasets: PASSOU.**
+## Limites e controle de qualidade
 
-O workflow do GitHub Pages deve executar `node --check agent.js` e `node tests/agent.test.cjs` antes da publicação do ambiente de teste.
+- A base pública contém somente os campos existentes no `data.json`; o agente não deve inventar campos ou fatos externos.
+- Se a informação não existir no esquema, a resposta informa que ela não consta no banco de dados disponível.
+- Se a consulta falhar por indisponibilidade da base, o agente informa a falha e não conclui que a informação inexiste.
+- Novas formulações identificadas durante o uso devem ser transformadas em testes de regressão antes de ampliar as regras de interpretação.
