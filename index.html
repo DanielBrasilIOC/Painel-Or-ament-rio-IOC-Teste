@@ -934,7 +934,7 @@ load();
 @media(max-width:600px){#agentModal{padding:0}#agentModal .agent-window{height:100dvh;border-radius:0}}
 </style>
 <div id="agentModal" hidden role="dialog" aria-modal="true" aria-label="Agente de consulta">
-<div class="agent-window"><div class="agent-head"><span>Agente de consulta · Ambiente de teste</span><button id="closeAgent" type="button">Fechar ✕</button></div><iframe src="./consulta.html?v=20261029-2245" title="Agente de consulta do painel"></iframe></div></div>
+<div class="agent-window"><div class="agent-head"><span>Agente de consulta · Ambiente de teste</span><button id="closeAgent" type="button">Fechar ✕</button></div><iframe src="./consulta.html?v=20261029-2255" title="Agente de consulta do painel"></iframe></div></div>
 <script>
 (()=>{const m=document.getElementById('agentModal'),b=document.getElementById('closeAgent');if(!m||!b)return;function close(){m.hidden=true;document.body.style.overflow='';}b.addEventListener('click',close);m.addEventListener('click',e=>{if(e.target===m)close();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!m.hidden)close();});})();
 </script>
