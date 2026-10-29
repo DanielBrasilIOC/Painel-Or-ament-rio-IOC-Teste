@@ -99,7 +99,7 @@ function answer(original) {
         return preferred(b)-preferred(a);
       });
       const {ds:src,found}=matched[0], vk=valueKey(found[0]);
-      if (!vk) return `Encontrei registros de ${found[0][key(found[0],['favorecido','beneficiario','fornecedor','nome','credor')]} mas não há campo de valor confiável para somar.`;
+      if (!vk) return `Encontrei registros de ${found[0][key(found[0],['favorecido','beneficiario','fornecedor','nome','credor'])]} mas não há campo de valor confiável para somar.`;
       const filtered=dateRange?found.filter(r=>{const dt=dateValue(r);return dt&&dt>=dateRange.start&&dt<dateRange.end;}):found;
       const total=filtered.reduce((s,r)=>s+parseMoney(r[vk]),0);
       const nameKey=key(filtered[0]||found[0],['favorecido','beneficiario','fornecedor','nome','credor']);
