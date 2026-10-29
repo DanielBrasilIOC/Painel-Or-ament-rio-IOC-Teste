@@ -59,7 +59,7 @@
    if(!orderIntent||!rankIntent)return null;
    const d=ds('ordens_bancarias');if(!d||!rs(d).length)return 'A base de ordens bancárias não está disponível para o ranking.';
    const m=s.match(/top\s*(\d+)/)||s.match(/\b(\d+)\s+maiores?\b/);
-   const singleIntent=/\b(quem recebeu|quem pagou|qual foi|qual e|qual o|maior pagamento|maior valor|maior ob|maior ordem bancaria)\b/.test(s)&&!m;
+   const singleIntent=/\b(quem recebeu|quem pagou|qual foi|qual e|qual o|qual a maior|maior pagamento|maior valor|maior ob|maior ordem bancaria)\b/.test(s)&&!m;
    const limit=Math.min(50,Math.max(1,Number(m?.[1]||(singleIntent?1:10))));
    const k=Object.keys(rs(d)[0]||{}),vk=k.find(x=>['valor','valor_ob'].includes(n(x)))||k.find(x=>/valor/.test(n(x)));
    if(!vk)return 'A base de ordens bancárias não possui um campo de valor identificável; não é possível montar o ranking.';
@@ -69,43 +69,90 @@
    const body=arr.slice(0,limit).map((x,i)=>(i+1)+'. '+brl(x.v)+' · OB '+String(x.r[ok]??'não informada')+(fk?' · '+String(x.r[fk]??''):'')).join('\n');
    return 'Ranking das '+Math.min(limit,arr.length)+' maiores ordens bancárias pagas, por valor (ordem decrescente):\n'+body+'\n\nRegistros classificados: '+arr.length+'\n'+source(d);
  };
+ const parseBRDate=v=>{const m=String(v||'').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(m)return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));const x=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return x?new Date(Number(x[1]),Number(x[2])-1,Number(x[3])):null};
+ const periodFor=q=>{
+   const s=c(q),raw=String(q||''),day=raw.match(/\b(\d{1,2})[\/.-](\d{1,2})[\/.-](20\d{2})\b/);
+   const months={janeiro:0,fevereiro:1,marco:2,abril:3,maio:4,junho:5,julho:6,agosto:7,setembro:8,outubro:9,novembro:10,dezembro:11};
+   const month=Object.keys(months).find(k=>new RegExp('\\b'+k+'\\b').test(s)),ym=s.match(/\b(20\d{2})\b/);
+   const year=Number(ym?.[1]||globalThis.__agentData?.source_updated_at?.slice(0,4)||new Date().getFullYear());
+   if(day){const dt=new Date(Number(day[3]),Number(day[2])-1,Number(day[1]));return{start:new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()),end:new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1),label:dt.toLocaleDateString('pt-BR')}}
+   if(month)return{start:new Date(year,months[month],1),end:new Date(year,months[month]+1,1),label:month.charAt(0).toUpperCase()+month.slice(1)+' de '+year};
+   if(ym)return{start:new Date(year,0,1),end:new Date(year+1,0,1),label:String(year)};
+   return null;
+ };
  const tripData=()=>{
    const d=ds('diarias_pagas');if(!d)return null;
    const sample=rs(d)[0]||{},nk=Object.keys(sample).find(k=>/favorecido|beneficiario|nome/.test(n(k)));
-   if(!nk)return {d,items:[],names:[],ranking:[]};
+   if(!nk)return{d,items:[],names:[],ranking:[]};
    const items=[];
    for(const r of rs(d)){
      const name=String(r[nk]??'').trim();if(!name)continue;
-     const obs=String(r.observacao??'');
-     const p=obs.match(/\bPCDP\s*[:#-]?\s*([A-Z0-9][A-Z0-9/-]*)/i);
+     const obs=String(r.observacao??''),p=obs.match(/\bPCDP\s*[:#-]?\s*([A-Z0-9][A-Z0-9/-]*)/i);
      if(!p)continue;
-     items.push({name,id:p[1].toUpperCase(),row:r});
+     const travelPeriod=obs.match(/PERIODO\s+DE\s+(\d{2}\/\d{2}\/\d{4})\s+A\s+(\d{2}\/\d{2}\/\d{4})/i);
+     items.push({name,id:p[1].toUpperCase(),row:r,start:travelPeriod?.[1]||r.data_pagamento||'',end:travelPeriod?.[2]||r.data_pagamento||''});
    }
    const unique=new Map();for(const x of items)unique.set(c(x.name)+'|'+x.id,x);
    const people=new Map();for(const x of unique.values()){const k=c(x.name);if(!people.has(k))people.set(k,{name:x.name,trips:new Set()});people.get(k).trips.add(x.id)}
    const ranking=[...people.values()].map(x=>({name:x.name,count:x.trips.size})).sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name,'pt-BR'));
-   return {d,items:[...unique.values()],names:ranking,ranking};
+   return{d,items:[...unique.values()],names:ranking,ranking};
  };
  const travelAnswer=q=>{
-   const s=c(q),intent=/(viaj|viagem|viagens|viajada|viajantes|pcdp)/.test(s);if(!intent)return null;
-   const t=tripData();if(!t||!t.d)return 'A base de diárias pagas não está disponível para consultar as viagens.';
+   const s=c(q),intent=/(viaj|viagem|viagens|viajada|viajantes|pcdp|diarias?)/.test(s);if(!intent)return null;
+   const t=tripData();if(!t||!t.d)return'A base de diárias pagas não está disponível para consultar as viagens.';
+   const range=periodFor(q);
+   const items=range?t.items.filter(x=>{const a=parseBRDate(x.start),b=parseBRDate(x.end);return a&&b&&a<range.end&&b>=range.start}):t.items;
+   const people=new Map();for(const x of items){const k=c(x.name);if(!people.has(k))people.set(k,{name:x.name,trips:new Set()});people.get(k).trips.add(x.id)}
+   const ranking=[...people.values()].map(x=>({name:x.name,count:x.trips.size})).sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name,'pt-BR'));
    const ranked=/(quem mais|mais viajou|fez mais viagens|realizou mais viagens|maior numero de viagens|maior quantidade de viagens|quem viajou mais|top\s*\d+|\d+\s+maiores)/.test(s);
-   const list=/(liste|listar|lista|nomes|quais pessoas|quem viajou|pessoas que viajaram|relacao de viajantes|quem sao os viajantes|quais sao os viajantes|nomes dos viajantes)/.test(s);
-   const count=/(quantas viagens|quantidade de viagens|numero de viagens|número de viagens|total de viagens|quantas pessoas viajaram|quantos viajantes|numero de pessoas que viajaram|quantas pcdps|quantos pcdps|numero de pcdps|total de pcdps)/.test(s);
-   if(!t.items.length)return 'Não localizei identificadores PCDP nas observações dos registros de diárias. Não é possível contar viagens com segurança.';
+   const list=/(liste|listar|lista|nomes|quais pessoas|quem viajou|pessoas que viajaram|relacao de viajantes|quem sao os viajantes|quais sao os viajantes|nomes dos viajantes|pessoas receberam diarias|pessoas tiveram diarias|quais pessoas receberam diarias)/.test(s);
+   const peopleCount=/(quantas pessoas|quantos viajantes|quantos viajantes distintos|numero de pessoas|quantas pessoas viajaram|quantas pessoas tiveram diarias|quantas pessoas receberam diarias)/.test(s);
+   const count=/(quantas viagens|quantidade de viagens|numero de viagens|total de viagens|quantas pcdps|quantos pcdps|numero de pcdps|total de pcdps)/.test(s);
+   if(!items.length)return'Não identifiquei viagens com PCDP no período solicitado'+(range?' ('+range.label+')':'')+'. A base não permite confirmar ocorrências fora dos registros disponíveis.';
+   if(peopleCount)return'Foram identificadas '+ranking.length+' pessoas distintas com viagens/diárias'+(range?' em '+range.label:'')+'. Total de PCDPs: '+items.length+'.\n'+source(t.d);
    if(ranked){
-     const topMatch=s.match(/top\s*(\d+)/)||s.match(/\b(\d+)\s+maiores/),lim=Math.min(50,Math.max(1,Number(topMatch?.[1]||10)));
-     const highest=t.ranking[0]?.count||0,leaders=t.ranking.filter(x=>x.count===highest);
-     const listRows=(topMatch?t.ranking.slice(0,lim):leaders).map((x,i)=>(i+1)+'. '+x.name+' — '+x.count+' viagem(ns)').join('\n');
-     return (topMatch?'Ranking dos '+Math.min(lim,t.ranking.length)+' viajantes com mais viagens identificadas:':'Quem mais viajou, considerando PCDPs distintos:')+'\n'+listRows+'\n\nCritério: cada número de PCDP distinto foi contado uma vez por favorecido, evitando contar pagamentos repetidos da mesma viagem como viagens diferentes. Viagens identificadas: '+t.items.length+'; pessoas: '+t.ranking.length+'.\n'+source(t.d);
+     const topMatch=s.match(/top\s*(\d+)/)||s.match(/\b(\d+)\s+maiores/),lim=Math.min(50,Math.max(1,Number(topMatch?.[1]||10))),highest=ranking[0]?.count||0,leaders=ranking.filter(x=>x.count===highest);
+     const listRows=(topMatch?ranking.slice(0,lim):leaders).map((x,i)=>(i+1)+'. '+x.name+' — '+x.count+' viagem(ns)').join('\n');
+     return(topMatch?'Ranking dos '+Math.min(lim,ranking.length)+' viajantes com mais viagens identificadas:':'Quem mais viajou, considerando PCDPs distintos:')+'\n'+listRows+'\n\nCritério: cada número de PCDP distinto foi contado uma vez por favorecido. Viagens identificadas: '+items.length+'; pessoas: '+ranking.length+(range?' no período '+range.label:'')+'.\n'+source(t.d);
    }
-   if(count)return 'Foram identificadas '+t.items.length+' viagens distintas por número de PCDP, envolvendo '+t.ranking.length+' pessoas. Cada PCDP foi contado uma única vez por favorecido.\n'+source(t.d);
-   if(list){
-     const body=t.ranking.map(x=>'• '+x.name+' — '+x.count+' viagem(ns)').join('\n');
-     return 'Pessoas com viagem identificada nos registros de diárias ('+t.ranking.length+' nomes):\n'+body+'\n\nCritério: favorecidos com PCDP identificável na observação; cada PCDP é contado uma vez por pessoa.\n'+source(t.d);
-   }
+   if(count)return'Foram identificadas '+items.length+' viagens distintas por número de PCDP, envolvendo '+ranking.length+' pessoas'+(range?' em '+range.label:'')+'. Cada PCDP foi contado uma única vez por favorecido.\n'+source(t.d);
+   if(list){const body=ranking.map(x=>'• '+x.name+' — '+x.count+' viagem(ns)').join('\n');return'Pessoas com viagem identificada nos registros de diárias ('+ranking.length+' nomes)'+(range?' em '+range.label:'')+':\n'+body+'\n\nCritério: favorecidos com PCDP identificável na observação; cada PCDP é contado uma vez por pessoa.\n'+source(t.d)}
    return null;
  };
- globalThis.answer=(q)=>dateOrderAnswer(q)||topOb(q)||travelAnswer(q)||previous(q);
+ const personTotalAnswer=q=>{
+   const s=c(q);if(!/(quanto|total|soma|valor|recebeu|recebido|pagamos|pagou|pago)/.test(s))return null;
+   let id='ordens_bancarias';if(/diaria|viag|pcdp/.test(s))id='diarias_pagas';else if(/publicac|artigo/.test(s))id='publicacoes_pagas';else if(/empenh/.test(s))id='empenhos';else if(/repass/.test(s))id='repasses';
+   const d=ds(id);if(!d)return null;
+   const candidates=[...new Set(rs(d).flatMap(r=>Object.entries(r).filter(([k,v])=>/favorecido|fornecedor|beneficiario|nome/.test(n(k))&&String(v??'').trim()).map(([,v])=>String(v).trim())))].sort((a,b)=>b.length-a.length);
+   const name=candidates.find(x=>s.includes(c(x)))||candidates.find(x=>c(x).split(' ').some(t=>t.length>=5&&s.split(' ').includes(t)));
+   if(!name)return null;
+   let found=rs(d).filter(r=>Object.entries(r).some(([k,v])=>/favorecido|fornecedor|beneficiario|nome/.test(n(k))&&c(v)===c(name)));
+   const range=periodFor(q);if(range)found=found.filter(r=>{const dt=parseBRDate(r.data_pagamento||r.data);return dt&&dt>=range.start&&dt<range.end});
+   if(!found.length)return'Não encontrei pagamentos para '+name+(range?' em '+range.label:'')+' na base '+(d.title||id)+'.';
+   const total=found.reduce((sum,r)=>sum+num(r.valor??r.saldo),0);
+   return'Total identificado para '+name+': '+brl(total)+'\nRegistros considerados: '+found.length+(range?' em '+range.label:'')+'\n'+source(d);
+ };
+ const financeBySourceAnswer=q=>{
+   const s=c(q);if(!/financeiro/.test(s)||!/(por fonte|por origem)/.test(s))return null;
+   const d=ds('financeiro');if(!d)return null;const groups=new Map();
+   for(const r of rs(d)){const k=String(r.fonte||'não informada');groups.set(k,(groups.get(k)||0)+num(r.saldo))}
+   const body=[...groups.entries()].sort((a,b)=>b[1]-a[1]).map(([k,v])=>'• Fonte '+k+': '+brl(v)).join('\n');
+   return'Saldo financeiro por fonte pagadora:\n'+body+'\n\nTotal consolidado: '+brl([...groups.values()].reduce((a,b)=>a+b,0))+'\n'+source(d);
+ };
+ const repasseSupplierAnswer=q=>{
+   const s=c(q);if(!/repass/.test(s)||!/fornecedor/.test(s))return null;
+   const d=ds('repasses');if(!d)return null;
+   const values=[...new Set(rs(d).flatMap(r=>[r.fornecedor,r.fornecedores]).map(v=>String(v??'').trim()).filter(Boolean))];
+   if(values.length===1&&c(values[0])==='aguardando orcamento')return'Os '+rs(d).length+' registros de Aguardando Repasse não identificam fornecedores individualizados: os campos “fornecedor” e “fornecedores” estão preenchidos com “AGUARDANDO ORÇAMENTO”. Portanto, a base disponível não permite listar nomes de fornecedores.\n'+source(d);
+   return'Fornecedores identificados nos registros de repasse:\n'+values.map(v=>'• '+v).join('\n')+'\n'+source(d);
+ };
+ const aggregateAnswer=q=>{
+   const s=c(q);if(!/(quanto|total|soma|valor|saldo|empenhad)/.test(s)||periodFor(q))return null;
+   const map=[['artigos cientificos','publicacoes_pagas'],['artigo','publicacoes_pagas'],['publicac','publicacoes_pagas'],['diaria','diarias_pagas'],['restos a pagar','restos'],['empenhad','empenhos'],['empenho','empenhos'],['saldo orcamentario','orcamentario'],['orcament','orcamentario'],['saldo financeiro','financeiro'],['financeiro','financeiro'],['aguardando repasse','repasses'],['repass','repasses'],['ordens bancarias','ordens_bancarias'],['ordem bancaria','ordens_bancarias']];
+   const found=map.find(([term])=>s.includes(term));if(!found)return null;
+   const d=ds(found[1]);if(!d)return null;
+   return(d.title||d.id)+': '+brl(d.total??rs(d).reduce((sum,r)=>sum+num(r.valor??r.saldo),0))+'\nRegistros: '+rs(d).length+'\n'+source(d);
+ };
+ globalThis.answer=(q)=>dateOrderAnswer(q)||financeBySourceAnswer(q)||repasseSupplierAnswer(q)||personTotalAnswer(q)||topOb(q)||travelAnswer(q)||aggregateAnswer(q)||previous(q);
  globalThis.__answer=globalThis.answer;
 })();
