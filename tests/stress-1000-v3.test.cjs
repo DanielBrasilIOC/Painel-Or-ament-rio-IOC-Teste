@@ -5,6 +5,7 @@ const extraP=['Qual é o total consolidado informado para {n}?','Quanto está di
 for(const d of data.datasets){for(const p of extraP){if(cases.length>=1000)break;add(p.replace('{n}',d.title),money(d.total),'total');}if(cases.length>=1000)break;}
 while(cases.length<1000){const d=data.datasets[cases.length%data.datasets.length];add('Qual é o total consolidado da aba '+d.title+'?',money(d.total),'total');}
 `;
-const patched=src.replace("assert.equal(cases.length,1000,`geradas ${cases.length}`);",extra+"assert.equal(cases.length,1000,`geradas ${cases.length}`);");
+let patched=src.replace("assert.equal(cases.length,1000,`geradas ${cases.length}`);",extra+"assert.equal(cases.length,1000,`geradas ${cases.length}`);");
+patched=patched.replaceAll('AUDITORIA_1000_V2','AUDITORIA_1000_V3').replaceAll('V2 — perguntas diferentes','V3 — perguntas diferentes').replaceAll('stress-1000-v2-report.json','stress-1000-v3-report.json');
 if(patched===src)throw new Error('ponto de inserção não encontrado');
 vm.runInNewContext(patched,{require,process,console,__dirname,Buffer,setTimeout,clearTimeout,fetch},{filename:'stress-1000-v3.test.cjs'});
