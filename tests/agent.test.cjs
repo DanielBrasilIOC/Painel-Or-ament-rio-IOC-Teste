@@ -97,6 +97,9 @@ function monthRange(month,year=2026){const m={janeiro:1,fevereiro:2,marco:3,abri
   const unknown=ask('Qual foi o valor pago ao favorecido XYZ_INEXISTENTE_987?');
   assert.ok(/não consegui|não encontrei|não há|não fornec|correspondência/i.test(unknown),'pergunta sem correspondência não deve inventar resposta');
 
+  // Consulta de campo por identificador deve retornar o registro específico, não o total da base.
+  const obLookup=ask('Qual processo da OB '+latest.r.ob+'?');
+  assert.ok(obLookup.includes(String(latest.r.processo)),`consulta do processo por OB divergente: ${obLookup}`);
   // Perguntas livres, ausência de campos e ação de limpar devem funcionar na interface.
   const missingField=ask('Qual é o telefone do favorecido?');
   assert.match(missingField,/não consta em nosso banco de dados/i,'campo ausente deve ser declarado explicitamente');
