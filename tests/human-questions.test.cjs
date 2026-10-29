@@ -4,7 +4,7 @@ const vm=require('node:vm');
 const URL='https://raw.githubusercontent.com/DanielBrasilIOC/brasil/main/data.json';
 const els={status:{textContent:'',className:''},answer:{textContent:'',hidden:true},q:{value:'',addEventListener(){}},ask:{addEventListener(){}}};
 const document={getElementById:id=>els[id],querySelectorAll:()=>[]};
-const norm=s=>String(s??'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().trim();
+const norm=s=>String(s??'').toLowerCase().trim();
 const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const rows=d=>Array.isArray(d?.rows)?d.rows:[];
 (async()=>{
