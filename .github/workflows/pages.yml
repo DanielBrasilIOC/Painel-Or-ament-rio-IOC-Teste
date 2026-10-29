@@ -12,13 +12,18 @@ concurrency:
   cancel-in-progress: true
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Baixar repositório
         uses: actions/checkout@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validar sintaxe do agente
+        run: node --check agent.js
+      - name: Testar respostas críticas
+        run: node tests/agent.test.cjs
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
         with:
@@ -30,3 +35,6 @@ jobs:
       - name: Publicar ambiente de teste
         id: deployment
         uses: actions/deploy-pages@v4
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
