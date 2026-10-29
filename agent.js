@@ -70,6 +70,28 @@ function answer(original) {
     const x=sorted[0], r=x.r, ob=key(r,['ob','documento','ordem']), val=valueKey(r), fav=key(r,['favorecido']);
     return `Última OB paga encontrada: ${fmtDate(x.date)}\n${ob ? `Documento: ${r[ob]}\n` : ''}${val ? `Valor: ${money(parseMoney(r[val]))}\n` : ''}${fav ? `Favorecido: ${r[fav]}\n` : ''}\nFonte: ${ds.source_name || ds.title}\nBase atualizada em: ${base.source_updated_at || 'data não informada'}`;
   }
+  // Pergunta analítica: pessoa que mais recebeu em diárias, somando todos os pagamentos por favorecido.
+  if (q.includes('diaria') && (q.includes('quem') || q.includes('mais recebeu') || q.includes('maior valor') || q.includes('maior total'))) {
+    const ds = findDs(['diarias_pagas','diarias pagas']);
+    if (!ds) return 'Não encontrei a base de Diárias Pagas.';
+    const favKey = key(rows(ds)[0], ['favorecido','beneficiario','nome']);
+    const valKey = valueKey(rows(ds)[0]);
+    if (!favKey || !valKey) return 'Encontrei a base de diárias, mas faltam os campos de favorecido ou valor para calcular com segurança.';
+    const grouped = new Map();
+    for (const r of rows(ds)) {
+      const name = String(r[favKey] || '').trim();
+      if (!name) continue;
+      const item = grouped.get(name) || {name, total:0, count:0};
+      item.total += parseMoney(r[valKey]); item.count++; grouped.set(name,item);
+    }
+    const ranked = [...grouped.values()].sort((a,b)=>b.total-a.total);
+    if (!ranked.length) return 'Não há favorecidos identificáveis na base de diárias.';
+    const top = ranked[0];
+    return 'Quem mais recebeu em diárias (soma dos pagamentos por favorecido):\\n' +
+      top.name + '\\nTotal recebido: ' + money(top.total) + '\\nQuantidade de pagamentos: ' + top.count +
+      (ranked.length>1 ? '\\n\\nPróximos: ' + ranked.slice(1,5).map((x,i)=>(i+2)+'. '+x.name+' — '+money(x.total)+' ('+x.count+' pagamentos)').join('\\n') : '') +
+      '\\n\\nFonte: ' + (ds.source_name || ds.title) + '\\nBase atualizada em: ' + (base.source_updated_at || 'data não informada');
+  }
   if ((q.includes('maior') || q.includes('top') || q.includes('maiores')) && (q.includes('pagamento') || q.includes('ob') || q.includes('ordem bancaria'))) {
     const ds=findDs(paymentTerms); if(!ds) return 'Não encontrei a base de pagamentos.';
     let arr=rows(ds).map(r=>({r,v:parseMoney(r[valueKey(r)])})).filter(x=>Number.isFinite(x.v));
