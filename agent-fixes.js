@@ -1,6 +1,6 @@
 /* Correções de interpretação do agente — somente ambiente de TESTE. */
 (()=>{
- const legacyAnswer=globalThis.answer,URL='https://raw.githubusercontent.com/DanielBrasilIOC/brasil/main/data.json';let data=null;
+ const legacyAnswer=globalThis.answer,URL='https://raw.githubusercontent.com/DanielBrasilIOC/brasil/agente-teste/data.json';let data=null;
  const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(),compact=s=>norm(s).replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim(),rows=d=>Array.isArray(d?.rows)?d.rows:[],money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),parse=v=>{if(typeof v==='number')return v;const s=String(v??'').replace(/[^0-9,.-]/g,'');return Number(s.includes(',')?s.replace(/\./g,'').replace(',','.'):s)||0},dsById=id=>data?.datasets.find(d=>d.id===id);
  const explicitDataset=q=>{const s=compact(q),tests=[['saldo financeiro','financeiro'],['restos a pagar','restos'],['empenhos 2026','empenhos'],['saldo orcamentario','orcamentario'],['aguardando repasse','repasses'],['ordens bancarias pagas','ordens_bancarias'],['ordens bancarias','ordens_bancarias'],['publicacoes pagas','publicacoes_pagas'],['diarias pagas','diarias_pagas']];for(const[n,id]of tests)if(s.includes(n))return dsById(id);return null};
  const keysOf=d=>[...new Set(rows(d).flatMap(r=>Object.keys(r||{})))];
