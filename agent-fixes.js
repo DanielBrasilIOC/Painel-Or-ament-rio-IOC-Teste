@@ -2,7 +2,7 @@
 (()=>{
  const legacyAnswer=globalThis.answer,URL='https://raw.githubusercontent.com/DanielBrasilIOC/brasil/agente-teste/data.json';let data=null;
  const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(),compact=s=>norm(s).replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim(),rows=d=>Array.isArray(d?.rows)?d.rows:[],money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),parse=v=>{if(typeof v==='number')return v;const s=String(v??'').replace(/[^0-9,.-]/g,'');return Number(s.includes(',')?s.replace(/\./g,'').replace(',','.'):s)||0},dsById=id=>data?.datasets.find(d=>d.id===id);
- const explicitDataset=q=>{const s=compact(q),tests=[['saldo financeiro','financeiro'],['restos a pagar','restos'],['empenhos 2026','empenhos'],['saldo orcamentario','orcamentario'],['aguardando repasse','repasses'],['ordens bancarias pagas','ordens_bancarias'],['ordens bancarias','ordens_bancarias'],['publicacoes pagas','publicacoes_pagas'],['diarias pagas','diarias_pagas']];for(const[n,id]of tests)if(s.includes(n))return dsById(id);return null};
+ const explicitDataset=q=>{const s=compact(q),tests=[['saldo financeiro','financeiro'],['restos a pagar','restos'],['empenhos 2026','empenhos'],['saldo orcamentario','orcamentario'],['aguardando repasse','repasses'],['ordens bancarias pagas','ordens_bancarias'],['ordens bancarias','ordens_bancarias'],['publicacoes pagas','publicacoes_pagas'],['artigos cientificos','publicacoes_pagas'],['artigos','publicacoes_pagas'],['diarias pagas','diarias_pagas']];for(const[n,id]of tests)if(s.includes(n))return dsById(id);return null};
  const keysOf=d=>[...new Set(rows(d).flatMap(r=>Object.keys(r||{})))];
  const fieldFromQuestion=(q,d)=>{if(!d)return null;const s=compact(q),keys=keysOf(d).sort((a,b)=>compact(b.replace(/_/g,' ')).length-compact(a.replace(/_/g,' ')).length);for(const k of keys){const f=compact(k.replace(/_/g,' '));if(new RegExp(`(?:campo|informacao de|consta em|diga o|informe o|mostre o|localize o)\\s+${f}\\b`).test(s))return k;if(new RegExp(`\\bqual(?: e o| é o| o)?\\s+${f}\\b`).test(s))return k;if(new RegExp(`\\bqual informacao de ${f}\\b`).test(s))return k}return null};
  const requestedField=(q,d)=>fieldFromQuestion(q,d)||(()=>{const s=compact(q),aliases=[['numero_solicitacao',['numero da solicitacao','numero solicitacao']],['natureza_codigo',['natureza codigo','codigo da natureza','codigo natureza']],['sub_grupo_despesa',['sub grupo de despesa','subgrupo de despesa']],['classificacao_orcamentaria',['classificacao orcamentaria']],['data_pagamento',['data do pagamento','data de pagamento']],['situacao_prioridade',['situacao prioridade']],['status_empenho',['status do empenho','status empenho']],['saldo',['saldo']],['valor',['valor pago','valor','montante']],['empenho',['numero do empenho','numero ne','empenho']],['processo',['processo']],['favorecido',['favorecido','beneficiario']],['fornecedor',['fornecedor']],['ob',['ordem bancaria','ob']],['cnpj',['cnpj']],['pi',['pi']],['programa',['programa']],['unidade',['unidade']],['uge',['uge']],['ug',['ug']],['ptres',['ptres']],['subitem',['subitem']],['natureza',['natureza']],['observacao',['observacao','descricao']],['vigencia',['vigencia']]];for(const[k,als]of aliases)if(als.some(a=>s.includes(compact(a))))return k;return null})();
@@ -35,7 +35,7 @@
    if(!intent)return null;
    const raw=String(q||''),day=raw.match(/\b(\d{1,2})[\/.-](\d{1,2})[\/.-](20\d{2})\b/);
    const months={janeiro:0,fevereiro:1,marco:2,abril:3,maio:4,junho:5,julho:6,agosto:7,setembro:8,outubro:9,novembro:10,dezembro:11};
-   const month=Object.keys(months).find(k=>s.includes(k));
+   const month=Object.keys(months).find(k=>new RegExp('\\\\b'+k+'\\\\b').test(s));
    const yearMatch=s.match(/\b(20\d{2})\b/),year=Number(yearMatch?.[1]||globalThis.__agentData?.source_updated_at?.slice(0,4)||new Date().getFullYear());
    if(!day&&!month&&!yearMatch)return null;
    let start,end,label;
@@ -44,9 +44,9 @@
    else{start=new Date(year,0,1);end=new Date(year+1,0,1);label=String(year)}
    const d=ds('ordens_bancarias');if(!d)return 'A base de ordens bancárias não está disponível.';
    const parseDate=v=>{const m=String(v||'').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(m)return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));const x=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return x?new Date(Number(x[1]),Number(x[2])-1,Number(x[3])):null};
-   const found=rs(d).filter(r=>{const dt=parseDate(r.data_pagamento||r.data);return dt&&dt>=start&&dt<end}).sort((a,b)=>String(a.ob||'').localeCompare(String(b.ob||'')));
+   const found=rs(d).filter(r=>{const dt=parseDate(r.data_pagamento||r.data);return dt&&dt>=start&&dt<end});\n   const rankMatch=s.match(/top\\s*(\\d+)/)||s.match(/\\b(\\d+)\\s+maiores?\\b/),rankIntent=/(top\\s*\\d+|maiores?\\b|maior valor|maior pagamento)/.test(s);\n   found.sort(rankIntent?(a,b)=>num(b.valor)-num(a.valor):(a,b)=>String(a.ob||'').localeCompare(String(b.ob||'')));
    if(!found.length)return 'Não encontrei ordens bancárias pagas em '+label+'.\n'+source(d);
-   const limit=25,shown=found.slice(0,limit);
+   const limit=rankMatch?Math.min(50,Math.max(1,Number(rankMatch[1]))):(rankIntent?10:25),shown=found.slice(0,limit);
    const lines=shown.map((r,i)=>(i+1)+'. OB '+String(r.ob||'não informada')+' · '+brl(num(r.valor))+' · '+String(r.favorecido||'favorecido não informado')).join('\n');
    return 'Foram encontradas '+found.length+' ordens bancárias pagas em '+label+'.'+(found.length>limit?'\nExibindo '+limit+' de '+found.length+' registros:':'')+'\n'+lines+'\n\n'+source(d);
  };
@@ -88,8 +88,8 @@
    const s=c(q),intent=/(viaj|viagem|viagens|viajada|viajantes|pcdp)/.test(s);if(!intent)return null;
    const t=tripData();if(!t||!t.d)return 'A base de diárias pagas não está disponível para consultar as viagens.';
    const ranked=/(quem mais|mais viajou|fez mais viagens|realizou mais viagens|maior numero de viagens|maior quantidade de viagens|quem viajou mais|top\s*\d+|\d+\s+maiores)/.test(s);
-   const list=/(liste|listar|lista|nomes|quais pessoas|quem viajou|pessoas que viajaram|relacao de viajantes|relação de viajantes)/.test(s);
-   const count=/(quantas viagens|quantidade de viagens|numero de viagens|número de viagens|total de viagens)/.test(s);
+   const list=/(liste|listar|lista|nomes|quais pessoas|quem viajou|pessoas que viajaram|relacao de viajantes|quem sao os viajantes|quais sao os viajantes|nomes dos viajantes)/.test(s);
+   const count=/(quantas viagens|quantidade de viagens|numero de viagens|número de viagens|total de viagens|quantas pessoas viajaram|quantos viajantes|numero de pessoas que viajaram|quantas pcdps|quantos pcdps|numero de pcdps|total de pcdps)/.test(s);
    if(!t.items.length)return 'Não localizei identificadores PCDP nas observações dos registros de diárias. Não é possível contar viagens com segurança.';
    if(ranked){
      const topMatch=s.match(/top\s*(\d+)/)||s.match(/\b(\d+)\s+maiores/),lim=Math.min(50,Math.max(1,Number(topMatch?.[1]||10)));
