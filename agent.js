@@ -5,6 +5,10 @@ const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLo
 const compact=s=>norm(s).replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();
 const money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const rows=d=>Array.isArray(d?.rows)?d.rows:[];
+const rowKeys=d=>[...new Set(rows(d).flatMap(r=>Object.keys(r||{})))];
+const filterPeriod=(arr,dr)=>dr?arr.filter(r=>{const dt=dateValue(r);return dt&&dt>=dr.start&&dt<dr.end}):arr;
+const textOfRow=r=>Object.values(r||{}).filter(v=>v!==null&&v!==undefined&&String(v).trim()!=='').map(String).join(' ');
+const resultHeader=(ds,arr,dr)=>'Fonte: '+(ds?.source_name||ds?.title||'base do dashboard')+'\nBase atualizada em: '+(base?.source_updated_at||'data não informada')+(dr?'\nPeríodo considerado: '+(dr.label||dr.start+' a '+dr.end):'');
 const byId=id=>(base?.datasets||[]).find(d=>norm(d.id)===norm(id));
 const key=(r,terms)=>Object.keys(r||{}).find(k=>terms.some(t=>norm(k).includes(norm(t))));
 const nameKey=r=>key(r,['favorecido','beneficiario','fornecedor','nome','credor']);
