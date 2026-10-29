@@ -69,21 +69,27 @@ const patterns=[
  const target=1000000;
  assert.ok(pairs.length*templates.length>=target,'Combinações insuficientes: '+pairs.length+' pares x '+templates.length+' frases');
  const unique=new Set(),failures=[];
- let passed=0;
- for(let i=0;i<target;i++){
-  const pair=pairs[Math.floor(i/templates.length)],template=templates[i%templates.length];
-  const question=template.replaceAll('{field}',pair.field).replaceAll('{id}',pair.id).replaceAll('{dataset}',pair.dataset);
-  if(unique.has(question)){failures.push({i:i+1,question,expected:pair.expected,actual:'DUPLICADA'});continue;}
-  unique.add(question);
-  let answer='';
-  try{answer=String(context.answer(question)||'');}catch(e){failures.push({i:i+1,question,expected:pair.expected,error:String(e),actual:''});continue;}
-  const start=answer.indexOf('Resultado(s): ');
-  const end=start>=0?answer.indexOf('\nRegistros correspondentes:',start):-1;
-  const actual=start>=0?(end>=0?answer.slice(start+'Resultado(s): '.length,end):answer.slice(start+'Resultado(s): '.length)).trim():null;
-  if(actual===pair.expected)passed++;
-  else if(failures.length<200)failures.push({i:i+1,dataset:pair.dataset,record:pair.id,field:pair.field,question,expected:pair.expected,actual,answer:answer.slice(0,700)});
+ let passed=0,questionIndex=0;
+ const basePerPair=Math.floor(target/pairs.length),extraPairs=target%pairs.length;
+ for(let pi=0;pi<pairs.length;pi++){
+  const pair=pairs[pi],variantCount=basePerPair+(pi<extraPairs?1:0);
+  for(let vi=0;vi<variantCount;vi++){
+   const template=templates[vi];
+   const question=template.replaceAll('{field}',pair.field).replaceAll('{id}',pair.id).replaceAll('{dataset}',pair.dataset);
+   questionIndex++;
+   if(unique.has(question)){failures.push({i:questionIndex,question,expected:pair.expected,actual:'DUPLICADA'});continue;}
+   unique.add(question);
+   let answer='';
+   try{answer=String(context.answer(question)||'');}catch(e){failures.push({i:questionIndex,question,expected:pair.expected,error:String(e),actual:''});continue;}
+   const start=answer.indexOf('Resultado(s): ');
+   const end=start>=0?answer.indexOf('\nRegistros correspondentes:',start):-1;
+   const actual=start>=0?(end>=0?answer.slice(start+'Resultado(s): '.length,end):answer.slice(start+'Resultado(s): '.length)).trim():null;
+   if(actual===pair.expected)passed++;
+   else if(failures.length<200)failures.push({i:questionIndex,dataset:pair.dataset,record:pair.id,field:pair.field,question,expected:pair.expected,actual,answer:answer.slice(0,700)});
+  }
  }
- const report={generated_at:new Date().toISOString(),base_updated_at:data.source_updated_at,datasets:data.datasets.map(d=>({id:d.id,title:d.title,rows:rows(d).length})),record_field_pairs:pairs.length,templates:templates.length,total_questions:target,unique_questions:unique.size,passed,failed:target-passed,pass_rate:passed/target,status:passed===target&&unique.size===target?'PASSOU':'REPROVADO',failures};
+ const coveredRows=new Set(pairs.map(p=>p.datasetId+'|'+p.id));
+ const report={generated_at:new Date().toISOString(),base_updated_at:data.source_updated_at,datasets:data.datasets.map(d=>({id:d.id,title:d.title,rows:rows(d).length})),record_field_pairs:pairs.length,record_rows_covered:coveredRows.size,templates:templates.length,questions_per_pair_min:basePerPair,questions_per_pair_max:basePerPair+1,total_questions:target,unique_questions:unique.size,passed,failed:target-passed,pass_rate:passed/target,status:passed===target&&unique.size===target?'PASSOU':'REPROVADO',failures};
  fs.writeFileSync('stress-1000000-report.json',JSON.stringify(report,null,2));
  console.log(JSON.stringify({AUDITORIA_1000000:report.status,total:target,unique:unique.size,passed,failed:target-passed,pass_rate:report.pass_rate,record_field_pairs:pairs.length,templates:templates.length},null,2));
  if(report.status!=='PASSOU')process.exitCode=1;
