@@ -32,7 +32,7 @@ function dateValue(r) {
   return null;
 }
 const fmtDate = s => s ? new Date(s + 'T12:00:00').toLocaleDateString('pt-BR') : 'data não informada';
-const valueKey = r => key(r, ['valor','saldo','total','pagamento','liquido','bruto']);
+const valueKey = r => { const ks=Object.keys(r||{}); return ks.find(k=>['valor','saldo','total'].includes(norm(k))) || ks.find(k=>/valor|saldo|total|liquido|bruto/.test(norm(k)) && !/data|pagamento/.test(norm(k))); };
 const dateFromText = q => {
   const m = q.match(/\b(janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)(?:\s+de\s+(20\d{2}))?\b/);
   if (!m) return null;
