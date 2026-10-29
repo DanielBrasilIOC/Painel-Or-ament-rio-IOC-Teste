@@ -19,3 +19,70 @@
   const fk=requestedField(s,explicit),ids=identifierTokens(s);if(fk&&ids.length&&/\b(qual|quais|informe|mostre|localize|encontre|diga|informacao|informação|o que consta)\b/.test(s)){const target=explicit?[explicit]:data.datasets,hits=[];for(const d of target)for(const r of rows(d)){const hay=compact(Object.values(r).join(' '));if(ids.every(id=>hay.includes(id)))hits.push({d,r})}if(hits.length===1){const {d,r}=hits[0],k=findField(r,fk);if(k)return`Campo consultado: ${k}\nResultado(s): ${String(r[k]??'')}\nRegistros correspondentes: 1\n\nFonte(s): ${d.source_name||d.title}\nBase atualizada em: ${data.source_updated_at||'data não informada'}`}if(hits.length>1){const vals=[];for(const h of hits){const k=findField(h.r,fk);if(k&&String(h.r[k]??'').trim())vals.push(`${h.d.title}: ${h.r[k]}`)}if(vals.length)return`Campo consultado: ${fk}\nResultado(s): ${vals.join('; ')}\nRegistros correspondentes: ${hits.length}\n\nBase atualizada em: ${data.source_updated_at||'data não informada'}`}}
   return legacyAnswer(q)};globalThis.answer=answerFixed;globalThis.__answer=answerFixed;globalThis.__agentFixReady=fetch(URL+'?fix='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{data=j;return j});
 })();
+
+/* Cobertura adicional de linguagem natural: rankings de OBs e viagens/diárias. */
+(()=>{
+ const previous=globalThis.answer;
+ const n=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+ const c=s=>n(s).replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();
+ const ds=id=>data?.datasets?.find(x=>x.id===id);
+ const rs=d=>Array.isArray(d?.rows)?d.rows:[];
+ const brl=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+ const num=v=>{if(typeof v==='number')return Number.isFinite(v)?v:0;const s=String(v??'').replace(/[^0-9,.-]/g,'');const z=s.includes(',')?s.replace(/\./g,'').replace(',','.'):s;const x=Number(z);return Number.isFinite(x)?x:0};
+ const source=d=>'Fonte: '+(d?.source_name||d?.title||'base do dashboard')+'\nBase atualizada em: '+(data?.source_updated_at||'data não informada');
+ const topOb=q=>{
+   const s=c(q);
+   const orderIntent=/(ordens? bancarias?|obs?\b|pagamentos?)/.test(s);
+   const rankIntent=/(top\s*\d+|\b\d+\s+maiores?\b|maiores?\b|maior valor|maior pagamento|de maior valor|mais altos? valores?)/.test(s);
+   if(!orderIntent||!rankIntent)return null;
+   const d=ds('ordens_bancarias');if(!d||!rs(d).length)return 'A base de ordens bancárias não está disponível para o ranking.';
+   const m=s.match(/top\s*(\d+)/)||s.match(/\b(\d+)\s+maiores?\b/);
+   const limit=Math.min(50,Math.max(1,Number(m?.[1]||10)));
+   const k=Object.keys(rs(d)[0]||{}),vk=k.find(x=>['valor','valor_ob'].includes(n(x)))||k.find(x=>/valor/.test(n(x)));
+   if(!vk)return 'A base de ordens bancárias não possui um campo de valor identificável; não é possível montar o ranking.';
+   const ok=k.find(x=>['ob','documento','ordem_bancaria'].includes(n(x)))||'ob',fk=k.find(x=>/favorecido|beneficiario|fornecedor/.test(n(x)));
+   const arr=rs(d).map(r=>({r,v:num(r[vk])})).filter(x=>Number.isFinite(x.v)).sort((a,b)=>b.v-a.v||String(a.r[ok]||'').localeCompare(String(b.r[ok]||'')));
+   if(!arr.length)return 'Não há ordens bancárias com valor numérico para classificar.';
+   const body=arr.slice(0,limit).map((x,i)=>(i+1)+'. '+brl(x.v)+' · OB '+String(x.r[ok]??'não informada')+(fk?' · '+String(x.r[fk]??''):'')).join('\n');
+   return 'Ranking das '+Math.min(limit,arr.length)+' maiores ordens bancárias pagas, por valor (ordem decrescente):\n'+body+'\n\nRegistros classificados: '+arr.length+'\n'+source(d);
+ };
+ const tripData=()=>{
+   const d=ds('diarias_pagas');if(!d)return null;
+   const sample=rs(d)[0]||{},nk=Object.keys(sample).find(k=>/favorecido|beneficiario|nome/.test(n(k)));
+   if(!nk)return {d,items:[],names:[],ranking:[]};
+   const items=[];
+   for(const r of rs(d)){
+     const name=String(r[nk]??'').trim();if(!name)continue;
+     const obs=String(r.observacao??'');
+     const p=obs.match(/\bPCDP\s*[:#-]?\s*([A-Z0-9][A-Z0-9/-]*)/i);
+     if(!p)continue;
+     items.push({name,id:p[1].toUpperCase(),row:r});
+   }
+   const unique=new Map();for(const x of items)unique.set(c(x.name)+'|'+x.id,x);
+   const people=new Map();for(const x of unique.values()){const k=c(x.name);if(!people.has(k))people.set(k,{name:x.name,trips:new Set()});people.get(k).trips.add(x.id)}
+   const ranking=[...people.values()].map(x=>({name:x.name,count:x.trips.size})).sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name,'pt-BR'));
+   return {d,items:[...unique.values()],names:ranking,ranking};
+ };
+ const travelAnswer=q=>{
+   const s=c(q),intent=/(viaj|viagem|viajada|viajantes|pcdp)/.test(s);if(!intent)return null;
+   const t=tripData();if(!t||!t.d)return 'A base de diárias pagas não está disponível para consultar as viagens.';
+   const ranked=/(quem mais|mais viajou|maior numero de viagens|maior quantidade de viagens|quem viajou mais|top\s*\d+|\d+\s+maiores)/.test(s);
+   const list=/(liste|listar|lista|nomes|quais pessoas|quem viajou|pessoas que viajaram|relacao de viajantes|relação de viajantes)/.test(s);
+   const count=/(quantas viagens|quantidade de viagens|numero de viagens|número de viagens|total de viagens)/.test(s);
+   if(!t.items.length)return 'Não localizei identificadores PCDP nas observações dos registros de diárias. Não é possível contar viagens com segurança.';
+   if(ranked){
+     const topMatch=s.match(/top\s*(\d+)/)||s.match(/\b(\d+)\s+maiores/),lim=Math.min(50,Math.max(1,Number(topMatch?.[1]||10)));
+     const highest=t.ranking[0]?.count||0,leaders=t.ranking.filter(x=>x.count===highest);
+     const listRows=(topMatch?t.ranking.slice(0,lim):leaders).map((x,i)=>(i+1)+'. '+x.name+' — '+x.count+' viagem(ns)').join('\n');
+     return (topMatch?'Ranking dos '+Math.min(lim,t.ranking.length)+' viajantes com mais viagens identificadas:':'Quem mais viajou, considerando PCDPs distintos:')+'\n'+listRows+'\n\nCritério: cada número de PCDP distinto foi contado uma vez por favorecido, evitando contar pagamentos repetidos da mesma viagem como viagens diferentes. Viagens identificadas: '+t.items.length+'; pessoas: '+t.ranking.length+'.\n'+source(t.d);
+   }
+   if(count)return 'Foram identificadas '+t.items.length+' viagens distintas por número de PCDP, envolvendo '+t.ranking.length+' pessoas. Cada PCDP foi contado uma única vez por favorecido.\n'+source(t.d);
+   if(list){
+     const body=t.ranking.map(x=>'• '+x.name+' — '+x.count+' viagem(ns)').join('\n');
+     return 'Pessoas com viagem identificada nos registros de diárias ('+t.ranking.length+' nomes):\n'+body+'\n\nCritério: favorecidos com PCDP identificável na observação; cada PCDP é contado uma vez por pessoa.\n'+source(t.d);
+   }
+   return null;
+ };
+ globalThis.answer=(q)=>topOb(q)||travelAnswer(q)||previous(q);
+ globalThis.__answer=globalThis.answer;
+})();
