@@ -14,7 +14,7 @@ const rows=d=>Array.isArray(d?.rows)?d.rows:[];
  const context={document,console,Date,Intl,Map,Set,Number,String,Array,Object,Math,JSON,fetch:async()=>({ok:true,json:async()=>data})};
  vm.createContext(context);
  const root=__dirname.replace(/[\\/]+tests$/,'');
- const agent=fs.readFileSync(root+'/agent.js','utf8')+'\\nglobalThis.__ready=load();';
+ const agent=fs.readFileSync(root+'/agent.js','utf8')+'\nglobalThis.__ready=load();';
  vm.runInContext(agent,context);
  await context.__ready;
  const fixes=fs.readFileSync(root+'/agent-fixes.js','utf8');
