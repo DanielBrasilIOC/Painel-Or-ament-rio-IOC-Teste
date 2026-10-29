@@ -2,7 +2,7 @@ name: Diagnóstico temporário do agente
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [auditoria-milhao]
 jobs:
   diagnose:
     runs-on: ubuntu-latest
