@@ -1,0 +1,49 @@
+name: Aplicar identidade institucional IOC
+
+on:
+  push:
+    paths:
+      - '.github/workflows/aplicar-identidade-ioc.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  branding:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Instalar banner institucional
+        shell: bash
+        run: |
+          mkdir -p assets
+          echo 'REPLACE_IMAGE_BASE64' | base64 -d > assets/ioc-banner.jpg
+
+      - name: Aplicar banner ao dashboard
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          css = '''\n.ioc-banner{width:100%;margin:0 0 18px;background:#153b57;border-radius:16px;overflow:hidden;border:1px solid #d7e3e9;box-shadow:0 10px 28px rgba(21,59,87,.08)}.ioc-banner img{display:block;width:100%;height:auto;max-height:132px;object-fit:cover;object-position:center}.ioc-banner-caption{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:700px){.ioc-banner{margin-bottom:13px;border-radius:12px}.ioc-banner img{max-height:76px}}\n'''
+          if '.ioc-banner{' not in s:
+              s = s.replace('</style>', css + '</style>', 1)
+          banner = '<div class="ioc-banner"><img src="./assets/ioc-banner.jpg" alt="Instituto Oswaldo Cruz — Ciência e Saúde desde 1900"><span class="ioc-banner-caption">Instituto Oswaldo Cruz — Ciência e Saúde desde 1900</span></div>'
+          if 'assets/ioc-banner.jpg' not in s:
+              s = s.replace('<main>', '<main>' + banner, 1)
+          p.write_text(s, encoding='utf-8')
+
+      - name: Publicar alteração
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html assets/ioc-banner.jpg
+          if git diff --cached --quiet; then
+            echo 'Nenhuma alteração necessária.'
+          else
+            git commit -m 'feat: aplicar banner institucional IOC ao dashboard de teste'
+            git push
+          fi
