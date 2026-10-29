@@ -102,6 +102,7 @@ function answerDataInventory(){
  return 'Inventário dos dados disponíveis no dashboard:\\n'+ds.map(d=>{const keys=rowKeys(d);return '• '+(d.title||d.id)+': '+rows(d).length+' registros; campos: '+keys.join(', ')}).join('\\n')+'\\n\\nTotal: '+ds.length+' conjuntos, '+ds.reduce((n,d)=>n+rows(d).length,0)+' registros e '+[...new Set(ds.flatMap(rowKeys))].length+' nomes de campos distintos.\\nBase atualizada em: '+(base?.source_updated_at||'data não informada');
 }
 function answerDataQuery(q,d,dr){
+ if((q.includes('ultima')||q.includes('ultimo')||q.includes('mais recente'))&&(q.includes('ob')||q.includes('ordem bancaria')))return null;
  const datasets=d?[d]:(base?.datasets||[]);
  const fields=requestedFields(q,datasets);
  if(!fields.length&&/\b(quanto|total|soma|recebeu|recebido|recebida|saldo|valor|temos)\b/.test(q))return null;
