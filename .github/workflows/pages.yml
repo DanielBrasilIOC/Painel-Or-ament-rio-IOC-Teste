@@ -26,7 +26,9 @@ jobs:
         run: node tests/agent.test.cjs
       - name: Testar perguntas da diretoria
         run: node tests/directoria.test.cjs
-      - name: Testar perguntas humanas sobre OBs e viagens\n        run: node tests/human-questions.test.cjs\n      - name: Configurar GitHub Pages
+      - name: Testar perguntas humanas sobre OBs e viagens
+        run: node tests/human-questions.test.cjs
+      - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
