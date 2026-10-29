@@ -188,7 +188,7 @@
  };
  const specificField=q=>{
   const s=c(q),d=explicit(q);
-  if(!d||!/(registro|campo)/.test(s))return null;
+  if(!d||(!/(registro|campo)/.test(s)&&!/[0-9]{10,}/.test(s)))return null;
   const idMatch=s.match(/registro (.+?) (?:da aba|na aba|da base|na base|em|de) /);const ids=idMatch?[idMatch[1].trim()]:s.split(' ').filter(t=>t.length>=5&&/[0-9]/.test(t));
   if(!ids.length)return null;
   const caches=globalThis.__agentRecordIndexes||(globalThis.__agentRecordIndexes=new Map());let index=caches.get(d.id);if(!index){index=new Map();for(const row of rs(d)){for(const value of Object.values(row||{})){const token=c(value);if(token.length>=5){if(!index.has(token))index.set(token,[]);index.get(token).push(row);}}}caches.set(d.id,index);}const found=new Set();for(const id of ids)for(const row of index.get(id)||[])found.add(row);const records=[...found];
