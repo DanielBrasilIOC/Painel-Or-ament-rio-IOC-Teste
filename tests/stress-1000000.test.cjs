@@ -83,7 +83,7 @@ const patterns=[
     const expectedValues=[...new Set(best.rows.map(i=>String(all[i][field]??'').trim()).filter(Boolean))];
     if(!expectedValues.length)continue;
     const id=best.tokens.join(' + '),key=d.id+'|'+id+'|'+field;
-    pairMap.set(key,{dataset:d.title,id,field:field.replace(/_/g,' '),expected:expectedValues.join('; '),datasetId:d.id,rowIndex:ri,matchedRows:best.rows.length});
+    pairMap.set(key,{dataset:d.title,id,field:field.replace(/_/g,' '),expected:expectedValues.join('; '),datasetId:d.id,rowIndex:ri,matchedRows:best.rows.length,matchedRowIndices:best.rows});
    }
   }
   pairs.push(...pairMap.values());
@@ -111,7 +111,7 @@ const patterns=[
    else if(failures.length<200)failures.push({i:questionIndex,dataset:pair.dataset,record:pair.id,field:pair.field,question,expected:pair.expected,actual,answer:answer.slice(0,700)});
   }
  }
- const coveredRows=new Set(pairs.map(p=>p.datasetId+'|'+p.rowIndex));
+ const coveredRows=new Set(pairs.flatMap(p=>p.matchedRowIndices.map(i=>p.datasetId+'|'+i)));
  const report={generated_at:new Date().toISOString(),base_updated_at:data.source_updated_at,datasets:data.datasets.map(d=>({id:d.id,title:d.title,rows:rows(d).length})),record_field_pairs:pairs.length,record_rows_covered:coveredRows.size,templates:templates.length,questions_per_pair_min:basePerPair,questions_per_pair_max:basePerPair+1,total_questions:target,unique_questions:unique.size,passed,failed:target-passed,pass_rate:passed/target,status:passed===target&&unique.size===target?'PASSOU':'REPROVADO',failures};
  fs.writeFileSync('stress-1000000-report.json',JSON.stringify(report,null,2));
  console.log(JSON.stringify({AUDITORIA_1000000:report.status,total:target,unique:unique.size,passed,failed:target-passed,pass_rate:report.pass_rate,record_field_pairs:pairs.length,templates:templates.length},null,2));
