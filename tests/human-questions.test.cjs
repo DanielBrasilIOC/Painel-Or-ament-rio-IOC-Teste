@@ -42,7 +42,7 @@ const rows=d=>Array.isArray(d?.rows)?d.rows:[];
  const names=ask('Liste os nomes de quem viajou');
  assert.match(names,/Pessoas com viagem identificada/i,'pedido de nomes de viajantes deve ser reconhecido');
  for(const x of expected)assert.ok(names.includes(x.name),`lista de viajantes omitiu ${x.name}`);
- assert.ok(names.includes(String(expected.length)+' nomes'),'quantidade de pessoas deve ser informada');
+ console.log('DEBUG_EXPECTED_COUNT',expected.length,'ANSWER_HEAD',names.slice(0,200)); assert.ok(names.includes(String(expected.length)+' nomes'),'quantidade de pessoas deve ser informada');
  const tripCount=ask('Quantas viagens foram realizadas?');
  assert.ok(tripCount.includes(String(unique.size)+' viagens distintas'),'total de viagens deve contar PCDPs distintos');
  console.log('AUDITORIA HUMANA: 4 cenários críticos aprovados; ranking top 10 OB, líderes de viagens, lista de viajantes e total de PCDPs.');
