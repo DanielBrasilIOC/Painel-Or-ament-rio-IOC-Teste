@@ -64,7 +64,7 @@
    return {d,items:[...unique.values()],names:ranking,ranking};
  };
  const travelAnswer=q=>{
-   const s=c(q),intent=/(viaj|viagem|viajada|viajantes|pcdp)/.test(s);if(!intent)return null;
+   const s=c(q),intent=/(viaj|viagem|viagens|viajada|viajantes|pcdp)/.test(s);if(!intent)return null;
    const t=tripData();if(!t||!t.d)return 'A base de diárias pagas não está disponível para consultar as viagens.';
    const ranked=/(quem mais|mais viajou|maior numero de viagens|maior quantidade de viagens|quem viajou mais|top\s*\d+|\d+\s+maiores)/.test(s);
    const list=/(liste|listar|lista|nomes|quais pessoas|quem viajou|pessoas que viajaram|relacao de viajantes|relação de viajantes)/.test(s);
