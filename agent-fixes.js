@@ -17,7 +17,7 @@
   const person=directPersonTotal(s);if(person)return person;const threshold=directThreshold(q);if(threshold)return threshold;const latest=directLatest(s);if(latest)return latest;
   const explicit=explicitDataset(s),isCount=/\b(quantos|quantas|quantidade|numero de registros|número de registros|registros existem|registros constam|itens existem|lancamentos existem|lançamentos existem|dados existem|numero atual|número atual|quantos lancamentos|quantos lançamentos|aba apresenta|quantidade registrada)\b/.test(s),isTotal=/\b(quanto|total|montante|valor total|valor de|saldo total|valor registrado|montante registrado|quanto esta registrado|quanto está registrado|quanto existe|quanto consta|quanto representa|disponivel atualmente|disponível atualmente|apresenta|montante aparece|contabilizado|valor informado|total financeiro|valor consolidado|total consolidado)\b/.test(s);if(explicit&&(isCount||isTotal)){if(isCount)return`${explicit.title}: ${explicit.detail_count??rows(explicit).length} registros.\nFonte: ${explicit.source_name||explicit.title}\nBase atualizada em: ${data.source_updated_at||'data não informada'}`;return`${explicit.title}: ${money(explicit.total)}\nRegistros: ${explicit.detail_count??rows(explicit).length}\nFonte: ${explicit.source_name||explicit.title}\nBase atualizada em: ${data.source_updated_at||'data não informada'}`}
   const fk=requestedField(s,explicit),ids=identifierTokens(s);if(fk&&ids.length&&/\b(qual|quais|informe|mostre|localize|encontre|diga|informacao|informação|o que consta)\b/.test(s)){const target=explicit?[explicit]:data.datasets,hits=[];for(const d of target)for(const r of rows(d)){const hay=compact(Object.values(r).join(' '));if(ids.every(id=>hay.includes(id)))hits.push({d,r})}if(hits.length===1){const {d,r}=hits[0],k=findField(r,fk);if(k)return`Campo consultado: ${k}\nResultado(s): ${String(r[k]??'')}\nRegistros correspondentes: 1\n\nFonte(s): ${d.source_name||d.title}\nBase atualizada em: ${data.source_updated_at||'data não informada'}`}if(hits.length>1){const vals=[];for(const h of hits){const k=findField(h.r,fk);if(k&&String(h.r[k]??'').trim())vals.push(`${h.d.title}: ${h.r[k]}`)}if(vals.length)return`Campo consultado: ${fk}\nResultado(s): ${vals.join('; ')}\nRegistros correspondentes: ${hits.length}\n\nBase atualizada em: ${data.source_updated_at||'data não informada'}`}}
-  return legacyAnswer(q)};globalThis.answer=answerFixed;globalThis.__answer=answerFixed;globalThis.__agentFixReady=fetch(URL+'?fix='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{data=j;return j});
+  return legacyAnswer(q)};globalThis.answer=answerFixed;globalThis.__answer=answerFixed;globalThis.__agentFixReady=fetch(URL+'?fix='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{data=j;globalThis.__agentData=j;return j});
 })();
 
 /* Cobertura adicional de linguagem natural: rankings de OBs e viagens/diárias. */
@@ -25,11 +25,11 @@
  const previous=globalThis.answer;
  const n=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
  const c=s=>n(s).replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();
- const ds=id=>data?.datasets?.find(x=>x.id===id);
+ const ds=id=>globalThis.__agentData?.datasets?.find(x=>x.id===id);
  const rs=d=>Array.isArray(d?.rows)?d.rows:[];
  const brl=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
  const num=v=>{if(typeof v==='number')return Number.isFinite(v)?v:0;const s=String(v??'').replace(/[^0-9,.-]/g,'');const z=s.includes(',')?s.replace(/\./g,'').replace(',','.'):s;const x=Number(z);return Number.isFinite(x)?x:0};
- const source=d=>'Fonte: '+(d?.source_name||d?.title||'base do dashboard')+'\nBase atualizada em: '+(data?.source_updated_at||'data não informada');
+ const source=d=>'Fonte: '+(d?.source_name||d?.title||'base do dashboard')+'\nBase atualizada em: '+(globalThis.__agentData?.source_updated_at||'data não informada');
  const topOb=q=>{
    const s=c(q);
    const orderIntent=/(ordens? bancarias?|obs?\b|pagamentos?)/.test(s);
