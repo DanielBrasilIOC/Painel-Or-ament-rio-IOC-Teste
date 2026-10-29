@@ -1,0 +1,1 @@
+Reexecutar um milhão de consultas após ajuste de campo explícito.
