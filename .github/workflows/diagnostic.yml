@@ -1,0 +1,30 @@
+name: Diagnóstico temporário do agente
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Executar testes e salvar logs
+        run: |
+          set +e
+          node tests/agent.test.cjs > agent-test.log 2>&1
+          echo "AGENT_EXIT=$?" >> agent-test.log
+          node tests/directoria.test.cjs > directoria-test.log 2>&1
+          echo "DIRECTORIA_EXIT=$?" >> directoria-test.log
+          cat agent-test.log
+          cat directoria-test.log
+      - name: Publicar logs de diagnóstico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostico-agente
+          path: |
+            agent-test.log
+            directoria-test.log
