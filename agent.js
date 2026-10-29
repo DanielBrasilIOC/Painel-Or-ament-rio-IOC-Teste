@@ -121,7 +121,7 @@ function answer(original) {
     return `Encontrei o conjunto “${d.title}”, mas a base não fornece um total confiável para responder a essa pergunta.\nFonte: ${d.source_name||d.title}`;
   }
   // Consulta ampla: procura nomes, fontes, favorecidos, fornecedores, documentos e códigos em todos os conjuntos.
-  const tokens = q.split(/\\s+/).filter(t => t.length >= 2 && !['qual','quais','quanto','quantos','quantas','total','valor','valores','mostre','liste','localize','encontre','sobre','para','pela','pelo','com','uma','uns','das','dos','que','foi','sao','tem','por','em','de'].includes(t));
+  const tokens = q.split(/\s+/).filter(t => t.length >= 2 && !['qual','quais','quanto','quantos','quantas','total','valor','valores','mostre','liste','localize','encontre','sobre','para','pela','pelo','com','uma','uns','das','dos','que','foi','sao','tem','por','em','de'].includes(t));
   const all = (base.datasets || []).flatMap(ds => rows(ds).map(r => ({ds,r})));
   if (tokens.length) {
     const hits = all.map(x => {
@@ -129,7 +129,7 @@ function answer(original) {
       const matched = tokens.filter(t => hay.includes(t));
       return {...x, score: matched.length, matched};
     }).filter(x => x.score > 0).sort((a,b) => b.score-a.score);
-    const wantsList = /\\b(quais|liste|listar|mostre|mostrar|localize|encontre|buscar|procure|registros|detalhe|detalhes|quem|fornecedor|favorecido|pessoa|fonte)\\b/.test(q);
+    const wantsList = /\b(quais|liste|listar|mostre|mostrar|localize|encontre|buscar|procure|registros|detalhe|detalhes|quem|fornecedor|favorecido|pessoa|fonte)\b/.test(q);
     if (hits.length) {
       const best = hits.filter(x => x.score === hits[0].score);
       const limit = Math.min(wantsList ? 25 : 12, best.length);
