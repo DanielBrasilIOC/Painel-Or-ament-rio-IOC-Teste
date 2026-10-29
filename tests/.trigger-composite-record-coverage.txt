@@ -1,0 +1,1 @@
+Executar auditoria de um milhão com identificadores compostos por registro.
