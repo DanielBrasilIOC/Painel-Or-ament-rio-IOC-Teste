@@ -104,6 +104,7 @@ function answerDataInventory(){
 function answerDataQuery(q,d,dr){
  const datasets=d?[d]:(base?.datasets||[]);
  const fields=requestedFields(q,datasets);
+ if(!fields.length&&/\b(quanto|total|soma|recebeu|recebido|recebida|saldo|valor|temos)\b/.test(q))return null;
  const terms=selectorTerms(q,fields);
  if(!terms.length)return null;
  const candidates=datasets.flatMap(ds=>rows(ds).map(r=>({ds,r}))).filter(x=>terms.every(t=>compact(textOfRow(x.r)).includes(t)));
