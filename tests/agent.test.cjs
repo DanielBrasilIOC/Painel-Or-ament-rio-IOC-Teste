@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 
-const DATA_URL = 'https://raw.githubusercontent.com/DanielBrasilIOC/brasil/main/data.json';
+const DATA_URL = 'https://raw.githubusercontent.com/DanielBrasilIOC/brasil/agente-teste/data.json';
 const els = {
   status:{textContent:'',className:''},
   answer:{textContent:'',hidden:true},
