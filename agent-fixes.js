@@ -30,14 +30,34 @@
  const brl=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
  const num=v=>{if(typeof v==='number')return Number.isFinite(v)?v:0;const s=String(v??'').replace(/[^0-9,.-]/g,'');const z=s.includes(',')?s.replace(/\./g,'').replace(',','.'):s;const x=Number(z);return Number.isFinite(x)?x:0};
  const source=d=>'Fonte: '+(d?.source_name||d?.title||'base do dashboard')+'\nBase atualizada em: '+(globalThis.__agentData?.source_updated_at||'data não informada');
+ const dateOrderAnswer=q=>{
+   const s=c(q),intent=/(ordens? bancarias?|obs?\b)/.test(s);
+   if(!intent)return null;
+   const raw=String(q||''),day=raw.match(/\b(\d{1,2})[\/.-](\d{1,2})[\/.-](20\d{2})\b/);
+   const months={janeiro:0,fevereiro:1,marco:2,abril:3,maio:4,junho:5,julho:6,agosto:7,setembro:8,outubro:9,novembro:10,dezembro:11};
+   const month=Object.keys(months).find(k=>s.includes(k));
+   const yearMatch=s.match(/\b(20\d{2})\b/),year=Number(yearMatch?.[1]||globalThis.__agentData?.source_updated_at?.slice(0,4)||new Date().getFullYear());
+   if(!day&&!month&&!yearMatch)return null;
+   let start,end,label;
+   if(day){const dt=new Date(Number(day[3]),Number(day[2])-1,Number(day[1]));start=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate());end=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1);label=dt.toLocaleDateString('pt-BR')}
+   else if(month){start=new Date(year,months[month],1);end=new Date(year,months[month]+1,1);label=month.charAt(0).toUpperCase()+month.slice(1)+' de '+year}
+   else{start=new Date(year,0,1);end=new Date(year+1,0,1);label=String(year)}
+   const d=ds('ordens_bancarias');if(!d)return 'A base de ordens bancárias não está disponível.';
+   const parseDate=v=>{const m=String(v||'').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(m)return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));const x=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return x?new Date(Number(x[1]),Number(x[2])-1,Number(x[3])):null};
+   const found=rs(d).filter(r=>{const dt=parseDate(r.data_pagamento||r.data);return dt&&dt>=start&&dt<end}).sort((a,b)=>String(a.ob||'').localeCompare(String(b.ob||'')));
+   if(!found.length)return 'Não encontrei ordens bancárias pagas em '+label+'.\n'+source(d);
+   const limit=25,shown=found.slice(0,limit);
+   const lines=shown.map((r,i)=>(i+1)+'. OB '+String(r.ob||'não informada')+' · '+brl(num(r.valor))+' · '+String(r.favorecido||'favorecido não informado')).join('\n');
+   return 'Foram encontradas '+found.length+' ordens bancárias pagas em '+label+'.'+(found.length>limit?'\nExibindo '+limit+' de '+found.length+' registros:':'')+'\n'+lines+'\n\n'+source(d);
+ };
  const topOb=q=>{
    const s=c(q);
    const orderIntent=/(ordens? bancarias?|obs?\b|pagamentos?)/.test(s);
-   const rankIntent=/(top\s*\d+|\b\d+\s+maiores?\b|maiores?\b|maior valor|maior pagamento|de maior valor|mais altos? valores?)/.test(s);
+   const rankIntent=/(top\s*\d+|\b\d+\s+maiores?\b|maiores?\b|maior valor|maior pagamento|maior ob|maior ordem bancaria|de maior valor|mais altos? valores?)/.test(s);
    if(!orderIntent||!rankIntent)return null;
    const d=ds('ordens_bancarias');if(!d||!rs(d).length)return 'A base de ordens bancárias não está disponível para o ranking.';
    const m=s.match(/top\s*(\d+)/)||s.match(/\b(\d+)\s+maiores?\b/);
-   const limit=Math.min(50,Math.max(1,Number(m?.[1]||10)));
+   const singleIntent=/\b(quem recebeu|quem pagou|qual foi|qual e|qual o|maior pagamento|maior valor|maior ob|maior ordem bancaria)\b/.test(s)&&!m;\n   const limit=Math.min(50,Math.max(1,Number(m?.[1]||(singleIntent?1:10))));
    const k=Object.keys(rs(d)[0]||{}),vk=k.find(x=>['valor','valor_ob'].includes(n(x)))||k.find(x=>/valor/.test(n(x)));
    if(!vk)return 'A base de ordens bancárias não possui um campo de valor identificável; não é possível montar o ranking.';
    const ok=k.find(x=>['ob','documento','ordem_bancaria'].includes(n(x)))||'ob',fk=k.find(x=>/favorecido|beneficiario|fornecedor/.test(n(x)));
@@ -83,6 +103,6 @@
    }
    return null;
  };
- globalThis.answer=(q)=>topOb(q)||travelAnswer(q)||previous(q);
+ globalThis.answer=(q)=>dateOrderAnswer(q)||topOb(q)||travelAnswer(q)||previous(q);
  globalThis.__answer=globalThis.answer;
 })();
