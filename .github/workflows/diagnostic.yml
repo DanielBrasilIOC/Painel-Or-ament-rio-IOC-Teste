@@ -18,8 +18,11 @@ jobs:
           echo "AGENT_EXIT=$?" >> agent-test.log
           node tests/directoria.test.cjs > directoria-test.log 2>&1
           echo "DIRECTORIA_EXIT=$?" >> directoria-test.log
+          node tests/stress-1000.test.cjs > stress-1000.log 2>&1
+          echo "STRESS_1000_EXIT=$?" >> stress-1000.log
           cat agent-test.log
           cat directoria-test.log
+          cat stress-1000.log
       - name: Publicar logs de diagnóstico
         if: always()
         uses: actions/upload-artifact@v4
@@ -28,3 +31,5 @@ jobs:
           path: |
             agent-test.log
             directoria-test.log
+            stress-1000.log
+            stress-1000-report.json
