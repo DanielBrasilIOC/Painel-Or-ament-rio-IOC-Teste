@@ -189,7 +189,7 @@
  const specificField=q=>{
   const s=c(q),d=explicit(q);
   if(!d||(!/(registro|campo)/.test(s)&&!/[0-9]{10,}/.test(s)))return null;
-  const rawIdMatch=String(q??'').match(/registro\\s+(.+?)\\s+(?:da aba|na aba|da base|na base)\\b/i);const ids=rawIdMatch?rawIdMatch[1].split(/\\s+\\+\\s+/).map(c).filter(Boolean):s.split(' ').filter(t=>t.length>=5&&/[0-9]/.test(t)).map(c);
+  const rawIdMatch=String(q??'').match(/registro\s+(.+?)\s+(?:da aba|na aba|da base|na base)\b/i);const ids=rawIdMatch?rawIdMatch[1].split(/\s+\+\s+/).map(c).filter(Boolean):s.split(' ').filter(t=>t.length>=5&&/[0-9]/.test(t)).map(c);
   if(!ids.length)return null;
   const caches=globalThis.__agentRecordIndexes||(globalThis.__agentRecordIndexes=new Map());let index=caches.get(d.id);if(!index){index=new Map();for(const row of rs(d)){for(const value of Object.values(row||{})){const token=c(value);if(token.length>=2){if(!index.has(token))index.set(token,[]);index.get(token).push(row);}}}caches.set(d.id,index);}const sets=ids.map(id=>new Set(index.get(id)||[]));const records=sets.length?[...sets[0]].filter(row=>sets.every(set=>set.has(row))):[];
   if(!records.length)return 'Não encontrei o identificador informado na base '+d.title+'. Não vou presumir um resultado.\nFonte: '+(d.source_name||d.title)+'\nBase atualizada em: '+(data()?.source_updated_at||'data não informada');
