@@ -34,12 +34,16 @@ function dateValue(r) {
 const fmtDate = s => s ? new Date(s + 'T12:00:00').toLocaleDateString('pt-BR') : 'data não informada';
 const valueKey = r => { const ks=Object.keys(r||{}); return ks.find(k=>['valor','saldo','total'].includes(norm(k))) || ks.find(k=>/valor|saldo|total|liquido|bruto/.test(norm(k)) && !/data|pagamento/.test(norm(k))); };
 const dateFromText = q => {
-  const m = q.match(/\b(janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)(?:\s+de\s+(20\d{2}))?\b/);
-  if (!m) return null;
   const months = ['janeiro','fevereiro','marco','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-  const idx = months.indexOf(m[1]);
-  const year = Number(m[2] || base?.source_updated_at?.slice(0,4) || new Date().getFullYear());
-  return {start:`${year}-${String(idx+1).padStart(2,'0')}-01`, end:idx===11?`${year+1}-01-01`:`${year}-${String(idx+2).padStart(2,'0')}-01`};
+  const m = q.match(/\b(janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)(?:\s+de\s+(20\d{2}))?\b/);
+  if (m) {
+    const idx = months.indexOf(m[1]);
+    const year = Number(m[2] || base?.source_updated_at?.slice(0,4) || new Date().getFullYear());
+    return {start:`${year}-${String(idx+1).padStart(2,'0')}-01`, end:idx===11?`${year+1}-01-01`:`${year}-${String(idx+2).padStart(2,'0')}-01`};
+  }
+  const y = q.match(/\b(20\d{2})\b/);
+  if (y) return {start:`${y[1]}-01-01`, end:`${Number(y[1])+1}-01-01`};
+  return null;
 };
 const threshold = q => {
   const m = q.match(/(?:acima|maior|superior)\s*(?:de|a|que)?\s*r?\$?\s*([\d.]+(?:,\d{1,2})?|\d+(?:\.\d{1,2})?)\s*(mil|milhao|milhoes)?/);
@@ -57,22 +61,22 @@ function chosenDataset(q) {
   if (q.includes('repass')) return byId('repasses');
   if (q.includes('orcament')) return byId('orcamentario');
   if (q.includes('financeiro')) return byId('financeiro');
-  if (q.includes('ob') || q.includes('ordem bancaria') || q.includes('pagamento')) return byId('ordens_bancarias');
+  if (q.includes('ob') || q.includes('ordem bancaria') || q.includes('ordens bancarias') || q.includes('pagamento') || q.includes('foi pago')) return byId('ordens_bancarias');
   if (q.includes('saldo')) return byId('financeiro');
   return null;
 }
-const stopWords = new Set(['qual','quais','quanto','quantos','quantas','total','valor','valores','mostre','liste','localize','encontre','sobre','para','pela','pelo','com','uma','uns','das','dos','que','foi','sao','tem','por','em','de','do','da','o','a','os','as','um','uma','recebeu','receberam','recebido','recebida','receber','mais','me','diga','informe','somar','soma','pagou','pago','paga','pagas','pagos','diaria','diarias','ordem','bancaria','bancarias','ob','saldo','financeiro','financeira','favorecido','favorecida','beneficiario','beneficiaria']);
+const stopWords = new Set(['qual','quais','quanto','quantos','quantas','total','valor','valores','mostre','liste','localize','encontre','sobre','para','pela','pelo','com','uma','uns','das','dos','que','foi','sao','tem','por','em','de','do','da','o','a','os','as','um','uma','recebeu','receberam','recebido','recebida','receber','mais','me','diga','informe','somar','soma','pagou','pago','paga','pagas','pagos','diaria','diarias','ordem','bancaria','bancarias','ob','saldo','financeiro','financeira','favorecido','favorecida','beneficiario','beneficiaria','janeiro','fevereiro','marco','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro']);
 function personRows(ds, q) {
-  const tokens=q.split(/\s+/).filter(t=>t.length>2&&!stopWords.has(t));
+  const tokens=q.split(/\s+/).filter(t=>t.length>2&&!stopWords.has(t)&&!/^(?:19|20)\d{2}$/.test(t));
   if (!tokens.length) return [];
   const nameKey = r => key(r,['favorecido','beneficiario','fornecedor','nome','credor']);
   return rows(ds).filter(r => {
     const name=norm(r[nameKey(r)] || '');
-    return name && tokens.some(t=>name.includes(t));
+    return name && tokens.every(t=>name.includes(t));
   });
 }
 function answer(original) {
-  const q = norm(original).replace(/[?!.;,]/g,' ').replace(/\s+/g,' ').trim();
+  const q = norm(original).replace(/[?!;,]/g,' ').replace(/\s+/g,' ').trim();
   if (!base) return 'A base ainda está carregando. Aguarde alguns segundos e tente novamente.';
   if (!q) return 'Digite uma pergunta para consultar os dados.';
   const d = chosenDataset(q);
@@ -80,7 +84,9 @@ function answer(original) {
   const isLastOb = (q.includes('ultima') || q.includes('ultimo') || q.includes('mais recente')) && (q.includes('ob') || q.includes('ordem bancaria'));
   if (isLastOb) {
     const ds=byId('ordens_bancarias');
-    const sorted=rows(ds).map(r=>({r,date:dateValue(r)})).filter(x=>x.date).sort((a,b)=>b.date.localeCompare(a.date));
+    let sorted=rows(ds).map(r=>({r,date:dateValue(r)})).filter(x=>x.date);
+    if(dateRange) sorted=sorted.filter(x=>x.date>=dateRange.start&&x.date<dateRange.end);
+    sorted.sort((a,b)=>b.date.localeCompare(a.date) || String(b.r[key(b.r,['ob','documento','ordem'])]||'').localeCompare(String(a.r[key(a.r,['ob','documento','ordem'])]||'')));
     if (!sorted.length) return 'Não foi possível confirmar a última OB: a base não contém datas de pagamento reconhecíveis.';
     const {r,date}=sorted[0], ob=key(r,['ob','documento','ordem']), val=valueKey(r), fav=key(r,['favorecido']);
     return `Última OB paga identificada: ${fmtDate(date)}\nDocumento: ${ob?r[ob]:'não informado'}\nValor: ${val?money(parseMoney(r[val])):'não informado'}\nFavorecido: ${fav?r[fav]:'não informado'}\n\nFonte: ${ds.source_name||ds.title}\nBase atualizada em: ${base.source_updated_at||'data não informada'}`;
