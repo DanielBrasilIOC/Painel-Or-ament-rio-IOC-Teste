@@ -4,7 +4,7 @@ const $ = id => document.getElementById(id);
 const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const money = v => Number(v || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
 const rows = d => Array.isArray(d?.rows) ? d.rows : [];
-const findDs = terms => (base?.datasets || []).find(d => terms.some(t => norm(`${d.id} ${d.title} ${d.short || ''} ${d.source_name || ''}`).includes(norm(t)));
+const findDs = terms => (base?.datasets || []).find(d => terms.some(t => norm(`${d.id} ${d.title} ${d.short || ''} ${d.source_name || ''}`).includes(norm(t))));
 const key = (r, terms) => Object.keys(r || {}).find(k => terms.some(t => norm(k).includes(norm(t))));
 const parseMoney = v => {
   if (typeof v === 'number') return v;
