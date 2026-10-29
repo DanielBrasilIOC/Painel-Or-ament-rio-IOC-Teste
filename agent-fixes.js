@@ -45,7 +45,8 @@
    const d=ds('ordens_bancarias');if(!d)return 'A base de ordens bancárias não está disponível.';
    const parseDate=v=>{const m=String(v||'').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);if(m)return new Date(Number(m[3]),Number(m[2])-1,Number(m[1]));const x=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return x?new Date(Number(x[1]),Number(x[2])-1,Number(x[3])):null};
    const found=rs(d).filter(r=>{const dt=parseDate(r.data_pagamento||r.data);return dt&&dt>=start&&dt<end});
-   const rankMatch=s.match(/top\s*(\d+)/)||s.match(/\b(\d+)\s+maiores?\b/),rankIntent=/(top\s*\d+|maiores?\b|maior valor|maior pagamento)/.test(s);\n   found.sort(rankIntent?(a,b)=>num(b.valor)-num(a.valor):(a,b)=>String(a.ob||'').localeCompare(String(b.ob||'')));
+   const rankMatch=s.match(/top\s*(\d+)/)||s.match(/\b(\d+)\s+maiores?\b/),rankIntent=/(top\s*\d+|maiores?\b|maior valor|maior pagamento)/.test(s);
+   found.sort(rankIntent?(a,b)=>num(b.valor)-num(a.valor):(a,b)=>String(a.ob||'').localeCompare(String(b.ob||'')));
    if(!found.length)return 'Não encontrei ordens bancárias pagas em '+label+'.\n'+source(d);
    const limit=rankMatch?Math.min(50,Math.max(1,Number(rankMatch[1]))):(rankIntent?10:25),shown=found.slice(0,limit);
    const lines=shown.map((r,i)=>(i+1)+'. OB '+String(r.ob||'não informada')+' · '+brl(num(r.valor))+' · '+String(r.favorecido||'favorecido não informado')).join('\n');
