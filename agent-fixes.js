@@ -132,12 +132,19 @@
    const total=found.reduce((sum,r)=>sum+num(r.valor??r.saldo),0);
    return'Total identificado para '+name+': '+brl(total)+'\nRegistros considerados: '+found.length+(range?' em '+range.label:'')+'\n'+source(d);
  };
- const financeBySourceAnswer=q=>{
-   const s=c(q);if(!/financeiro/.test(s)||!/(por fonte|por origem)/.test(s))return null;
-   const d=ds('financeiro');if(!d)return null;const groups=new Map();
-   for(const r of rs(d)){const k=String(r.fonte||'não informada');groups.set(k,(groups.get(k)||0)+num(r.saldo))}
-   const body=[...groups.entries()].sort((a,b)=>b[1]-a[1]).map(([k,v])=>'• Fonte '+k+': '+brl(v)).join('\n');
-   return'Saldo financeiro por fonte pagadora:\n'+body+'\n\nTotal consolidado: '+brl([...groups.values()].reduce((a,b)=>a+b,0))+'\n'+source(d);
+ const financeBreakdownAnswer=q=>{
+   const s=c(q);if(!/financeiro/.test(s)||!/(por fonte|por origem|por vinculacao)/.test(s))return null;
+   const d=ds('financeiro');if(!d)return null;const field=/vinculacao/.test(s)?'vinculo':'fonte',groups=new Map();
+   for(const r of rs(d)){const k=String(r[field]||'não informado');groups.set(k,(groups.get(k)||0)+num(r.saldo))}
+   const body=[...groups.entries()].sort((a,b)=>b[1]-a[1]).map(([k,v])=>'• '+(field==='fonte'?'Fonte ':'Vinculação ')+k+': '+brl(v)).join('\n');
+   return'Saldo financeiro por '+(field==='fonte'?'fonte pagadora':'vinculação')+':\n'+body+'\n\nTotal consolidado: '+brl([...groups.values()].reduce((a,b)=>a+b,0))+'\n'+source(d);
+ };
+ const datasetFieldsAnswer=q=>{
+   const s=c(q);if(!/(campo|campos|coluna|colunas)/.test(s))return null;
+   const map=[['saldo financeiro','financeiro'],['restos a pagar','restos'],['empenhos','empenhos'],['empenho','empenhos'],['saldo orcamentario','orcamentario'],['aguardando repasse','repasses'],['ordens bancarias','ordens_bancarias'],['ordem bancaria','ordens_bancarias'],['publicacoes','publicacoes_pagas'],['artigos','publicacoes_pagas'],['diarias','diarias_pagas']];
+   const hit=map.find(([term])=>s.includes(term));if(!hit)return null;const d=ds(hit[1]);if(!d)return null;
+   const fields=[...new Set(rs(d).flatMap(r=>Object.keys(r||{})))];
+   return'Campos disponíveis em '+(d.title||d.id)+':\n'+fields.join(', ')+'\nRegistros consultados: '+rs(d).length+'\n'+source(d);
  };
  const repasseSupplierAnswer=q=>{
    const s=c(q);if(!/repass/.test(s)||!/fornecedor/.test(s))return null;
@@ -153,6 +160,6 @@
    const d=ds(found[1]);if(!d)return null;
    return(d.title||d.id)+': '+brl(d.total??rs(d).reduce((sum,r)=>sum+num(r.valor??r.saldo),0))+'\nRegistros: '+rs(d).length+'\n'+source(d);
  };
- globalThis.answer=(q)=>dateOrderAnswer(q)||financeBySourceAnswer(q)||repasseSupplierAnswer(q)||personTotalAnswer(q)||topOb(q)||travelAnswer(q)||aggregateAnswer(q)||previous(q);
+ globalThis.answer=(q)=>dateOrderAnswer(q)||financeBreakdownAnswer(q)||repasseSupplierAnswer(q)||datasetFieldsAnswer(q)||personTotalAnswer(q)||topOb(q)||travelAnswer(q)||aggregateAnswer(q)||previous(q);
  globalThis.__answer=globalThis.answer;
 })();
