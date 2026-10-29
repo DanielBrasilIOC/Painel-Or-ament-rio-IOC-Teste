@@ -113,5 +113,40 @@ function monthRange(month,year=2026){const m={janeiro:1,fevereiro:2,marco:3,abri
   assert.equal(els.q.value,'','Limpar pergunta deve esvaziar o campo');
   assert.equal(els.answer.textContent,'','Limpar pergunta deve remover a resposta anterior');
   assert.equal(els.answer.hidden,true,'a resposta anterior deve ficar oculta após limpar');
+  // Inventário completo: o agente precisa expor cada conjunto e cada coluna carregada.
+  const inventory=String(context.answerDataInventory());
+  assert.ok(inventory.includes('8 conjuntos'),'inventário deve identificar os 8 conjuntos');
+  for(const ds of data.datasets){
+    assert.ok(inventory.includes(ds.title||ds.id),`inventário sem conjunto ${ds.id}`);
+    for(const field of [...new Set(rows(ds).flatMap(r=>Object.keys(r)))])
+      assert.ok(inventory.includes(field),`inventário sem campo ${ds.id}.${field}`);
+  }
+
+  // Consulta por campo e identificador deve recuperar o valor do registro, não um resumo genérico.
+  const obsRow=latest.r;
+  const obsExpected=String(obsRow.observacao||'');
+  if(obsExpected){
+    const observation=ask('Qual é a observação da OB '+obsRow.ob+'?');
+    assert.ok(observation.includes(obsExpected),`consulta da observação da OB não retornou o texto integral: ${observation}`);
+  }
+
+  // Cada campo de cada conjunto é consultável por campo + identificador de registro.
+  let fieldQueries=0;
+  for(const ds of data.datasets){
+    const sample=rows(ds).find(r=>Object.values(r).some(v=>v!==null&&v!==undefined&&String(v).trim()!==''));
+    if(!sample)continue;
+    const anchorKey=['ob','empenho','processo','documento','solicitacao_ne','numero_solicitacao','cnpj','uge','ug','ptres','pi','unidade','favorecido','fornecedor'].find(k=>sample[k]!==undefined&&sample[k]!==null&&String(sample[k]).trim()!=='');
+    if(!anchorKey)continue;
+    const anchorValue=String(sample[anchorKey]).trim();
+    for(const field of Object.keys(sample)){
+      if(sample[field]===null||sample[field]===undefined||String(sample[field]).trim()==='')continue;
+      const query='Qual '+field.replace(/_/g,' ')+' '+anchorValue;
+      const result=String(context.answerDataQuery(query,ds,null)||'');
+      assert.ok(result&&!/Não encontrei o dado solicitado/.test(result),`campo não consultável: ${ds.id}.${field}; pergunta: ${query}; resposta: ${result}`);
+      fieldQueries++;
+    }
+  }
+  assert.ok(fieldQueries>0,'deve executar consultas de verificação dos campos');
+
   console.log(`AUDITORIA PASSOU: ${checks.length} consultas + integridade dos 8 datasets.`);
 })().catch(e=>{console.error(e);process.exitCode=1;});
