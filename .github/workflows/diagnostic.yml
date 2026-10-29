@@ -11,25 +11,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Executar testes e salvar logs
+      - name: Executar bateria de 1000 perguntas V2
         run: |
           set +e
-          node tests/agent.test.cjs > agent-test.log 2>&1
-          echo "AGENT_EXIT=$?" >> agent-test.log
-          node tests/directoria.test.cjs > directoria-test.log 2>&1
-          echo "DIRECTORIA_EXIT=$?" >> directoria-test.log
-          node tests/stress-1000.test.cjs > stress-1000.log 2>&1
-          echo "STRESS_1000_EXIT=$?" >> stress-1000.log
-          cat agent-test.log
-          cat directoria-test.log
-          cat stress-1000.log
-      - name: Publicar logs de diagnóstico
+          node tests/stress-1000-v2.test.cjs > stress-1000-v2.log 2>&1
+          echo "STRESS_1000_V2_EXIT=$?" >> stress-1000-v2.log
+          cat stress-1000-v2.log
+      - name: Publicar relatório da auditoria
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: diagnostico-agente
+          name: auditoria-1000-v2
           path: |
-            agent-test.log
-            directoria-test.log
-            stress-1000.log
-            stress-1000-report.json
+            stress-1000-v2.log
+            stress-1000-v2-report.json
