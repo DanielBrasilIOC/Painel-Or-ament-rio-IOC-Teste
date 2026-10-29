@@ -189,13 +189,13 @@
  const specificField=q=>{
   const s=c(q),d=explicit(q);
   if(!d||!/(registro|campo|consta|informe|mostre|localize|encontre|qual|diga)/.test(s))return null;
-  const ids=s.split(' ').filter(t=>t.length>=12&&/[0-9]/.test(t));
+  const ids=s.split(' ').filter(t=>t.length>=5&&/[0-9]/.test(t));
   if(!ids.length)return null;
-  const records=rs(d).filter(r=>ids.some(id=>Object.values(r||{}).some(v=>c(v)===id||c(v).includes(id))));
+  const caches=globalThis.__agentRecordIndexes||(globalThis.__agentRecordIndexes=new Map());let index=caches.get(d.id);if(!index){index=new Map();for(const row of rs(d)){for(const value of Object.values(row||{})){const token=c(value);if(token.length>=5){if(!index.has(token))index.set(token,[]);index.get(token).push(row);}}}caches.set(d.id,index);}const found=new Set();for(const id of ids)for(const row of index.get(id)||[])found.add(row);const records=[...found];
   if(!records.length)return 'Não encontrei o identificador informado na base '+d.title+'. Não vou presumir um resultado.\nFonte: '+(d.source_name||d.title)+'\nBase atualizada em: '+(data()?.source_updated_at||'data não informada');
   const keys=[...new Set(records.flatMap(r=>Object.keys(r||{})))];
   const aliases=[['natureza_codigo',['natureza codigo','codigo da natureza','codigo natureza']],['natureza',['natureza']],['fornecedor',['fornecedor']],['saldo',['saldo']],['processo',['processo']],['empenho',['numero do empenho','numero ne','empenho']],['cnpj',['cnpj']],['pi',['pi']],['programa',['programa']],['autor_emenda',['autor da emenda','autor emenda']],['ob',['ordem bancaria','numero da ob','ob']],['documento',['documento']],['valor',['valor pago','valor']],['data_pagamento',['data de pagamento','data do pagamento','data pagamento']],['observacao',['observacao']],['situacao_prioridade',['situacao prioridade','situacao']]];
-  const fieldText=s.replace(/saldo financeiro|restos a pagar|empenhos 2026|saldo orcamentario|aguardando repasse|ordens bancarias pagas|ordens bancarias|publicacoes pagas|artigos cientificos|diarias pagas/g,' '); let key=keys.filter(k=>fieldText.includes(c(k.replace(/_/g,' ')))).sort((a,b)=>c(b).length-c(a).length)[0];
+  const fieldText=s.replace(/saldo financeiro|restos a pagar|empenhos 2026|saldo orcamentario|aguardando repasse|ordens bancarias pagas|ordens bancarias|publicacoes pagas|artigos cientificos|diarias pagas/g,' ');const hasPhrase=(text,phrase)=>(' '+text+' ').includes(' '+phrase+' ');let key=keys.filter(k=>hasPhrase(fieldText,c(k.replace(/_/g,' ')))).sort((a,b)=>c(b).length-c(a).length)[0];
   if(!key){const alias=aliases.find(x=>x[1].some(p=>s.includes(p)));if(alias)key=keys.find(k=>k===alias[0]);}
   if(!key)return null;
   const vals=[...new Set(records.map(r=>String(r[key]??'').trim()).filter(Boolean))];
