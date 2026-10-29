@@ -98,6 +98,34 @@ function answer(original) {
     if(Number.isFinite(val)) return `${d.title}: ${money(val)}\nRegistros: ${d.detail_count ?? rows(d).length}\nFonte: ${d.source_name||d.title}\nBase atualizada em: ${base.source_updated_at||'data não informada'}`;
     return `Encontrei o conjunto “${d.title}”, mas a base não fornece um total confiável para responder a essa pergunta.\nFonte: ${d.source_name||d.title}`;
   }
+  // Consulta ampla: procura nomes, fontes, favorecidos, fornecedores, documentos e códigos em todos os conjuntos.
+  const tokens = q.split(/\\s+/).filter(t => t.length >= 2 && !['qual','quais','quanto','quantos','quantas','total','valor','valores','mostre','liste','localize','encontre','sobre','para','pela','pelo','com','uma','uns','das','dos','que','foi','sao','tem','por','em','de'].includes(t));
+  const all = (base.datasets || []).flatMap(ds => rows(ds).map(r => ({ds,r})));
+  if (tokens.length) {
+    const hits = all.map(x => {
+      const hay = norm(Object.entries(x.r || {}).map(([k,v]) => k + ' ' + v).join(' ') + ' ' + x.ds.title + ' ' + x.ds.source_name);
+      const matched = tokens.filter(t => hay.includes(t));
+      return {...x, score: matched.length, matched};
+    }).filter(x => x.score > 0).sort((a,b) => b.score-a.score);
+    const wantsList = /\\b(quais|liste|listar|mostre|mostrar|localize|encontre|buscar|procure|registros|detalhe|detalhes|quem|fornecedor|favorecido|pessoa|fonte)\\b/.test(q);
+    if (hits.length) {
+      const best = hits.filter(x => x.score === hits[0].score);
+      const limit = Math.min(wantsList ? 25 : 12, best.length);
+      const numericFields = x => Object.entries(x.r || {}).filter(([k,v]) => typeof v === 'number' || (typeof v === 'string' && /valor|saldo|total|pagamento|liquido|bruto/i.test(k) && parseMoney(v) !== 0));
+      if (q.includes('total') || q.includes('quanto') || q.includes('soma') || q.includes('somar')) {
+        const seen = new Set();
+        let total = 0, count = 0, fieldName = '';
+        for (const x of best) for (const [k,v] of numericFields(x)) {
+          if (/valor|saldo|total|pagamento|liquido|bruto/i.test(k)) {
+            const identity = x.ds.id + '|' + JSON.stringify(x.r) + '|' + k;
+            if (!seen.has(identity)) { seen.add(identity); total += parseMoney(v); count++; fieldName = k; }
+          }
+        }
+        if (count) return `Encontrei ${best.length} registro(s) correspondentes. Soma do campo financeiro “${fieldName}”: ${money(total)}\\nRegistros considerados: ${count}\\nConjuntos: ${[...new Set(best.map(x=>x.ds.title))].join(', ')}\\n\\nA soma é baseada nos registros encontrados pelos termos da pergunta; confira os detalhes abaixo.\\n` + best.slice(0,limit).map((x,i)=>`${i+1}. ${x.ds.title} — ${Object.entries(x.r).slice(0,7).map(([k,v])=>k+': '+v).join(' · ')}`).join('\\n');
+      }
+      return `Encontrei ${best.length} registro(s) com maior correspondência para sua pergunta.\\nConjuntos: ${[...new Set(best.map(x=>x.ds.title))].join(', ')}\\n\\n` + best.slice(0,limit).map((x,i)=>`${i+1}. [${x.ds.title}] ${Object.entries(x.r).filter(([k,v])=>v!==''&&v!==null&&v!==undefined).slice(0,9).map(([k,v])=>k+': '+v).join(' · ')}`).join('\\n') + (best.length>limit ? `\\n\\nExibindo ${limit} de ${best.length} registros correspondentes.` : '') + `\\n\\nFonte da base: ${base.source_updated_at || 'data não informada'}.`;
+    }
+  }
   return `Não consegui interpretar essa pergunta com segurança.\n\nExperimente:\n• Qual foi a última OB paga?\n• Quais foram os 5 maiores pagamentos em outubro?\n• Quantas OBs acima de R$ 50 mil foram pagas em outubro?\n• Qual o total de pagamentos em outubro?\n• Qual é o saldo financeiro?\n• Quanto temos de restos a pagar?\n• Qual o total de diárias pagas?`;
 }
 async function load() {
