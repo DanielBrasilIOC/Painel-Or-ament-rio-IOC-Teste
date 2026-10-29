@@ -114,6 +114,14 @@ function monthRange(month,year=2026){const m={janeiro:1,fevereiro:2,marco:3,abri
   assert.equal(els.answer.textContent,'','Limpar pergunta deve remover a resposta anterior');
   assert.equal(els.answer.hidden,true,'a resposta anterior deve ficar oculta após limpar');
   // Inventário completo: o agente precisa expor cada conjunto e cada coluna carregada.
+  const inventoryAnswer=ask('Quais são todos os campos disponíveis no dashboard?');
+  for(const ds of data.datasets){
+    for(const field of [...new Set(rows(ds).flatMap(r=>Object.keys(r)))])
+      assert.ok(inventoryAnswer.includes(field),`resposta ao pedido de inventário omitiu o campo ${field}`);
+  }
+  const withoutIdentifier=ask('Qual é a observação do empenho?');
+  assert.match(withoutIdentifier,/informe um identificador/i,'pergunta por campo sem identificar o registro deve pedir um identificador');
+
   const inventory=String(context.answerDataInventory());
   assert.ok(inventory.includes('8 conjuntos'),'inventário deve identificar os 8 conjuntos');
   for(const ds of data.datasets){
