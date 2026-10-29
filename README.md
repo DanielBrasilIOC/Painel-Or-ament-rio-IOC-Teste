@@ -3,7 +3,7 @@
 Este é um ambiente de teste separado do repositório de produção.
 
 ## Acesso e segurança
-- A interface fica publicada pelo GitHub Pages deste repositório.
+- A interface é publicada pelo GitHub Pages deste repositório, com origem configurada em Settings → Pages → GitHub Actions.
 - O agente consulta, em modo somente leitura, o arquivo público `data.json` do repositório de produção `DanielBrasilIOC/brasil`.
 - Este projeto não grava nem altera dados do painel de produção.
 - Como a base consultada é pública, as respostas podem refletir a última versão publicada nela; a interface mostra a data de atualização disponível na fonte.
@@ -17,7 +17,7 @@ Este é um ambiente de teste separado do repositório de produção.
 - totais por mês quando os registros possuem uma data reconhecível.
 
 ## Publicação
-A origem de publicação deve estar configurada como **GitHub Actions** em Settings → Pages. O workflow `.github/workflows/pages.yml` publica este repositório independente no GitHub Pages quando há commit em `main` ou execução manual.
+O workflow `.github/workflows/pages.yml` publica este repositório independente no GitHub Pages quando há commit em `main` ou execução manual. Após alterar Settings → Pages, um novo commit ou uma execução manual é necessário para testar a publicação.
 
 ## Limitações conhecidas
 - A interpretação de linguagem natural é baseada em correspondência de palavras e padrões, não em IA generativa.
