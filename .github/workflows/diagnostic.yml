@@ -1,4 +1,4 @@
-name: Auditoria sistemática do agente — ambiente de teste
+name: Auditoria sistemática do agente — ambiente de teste (branch isolada)
 on:
   workflow_dispatch:
   push:
