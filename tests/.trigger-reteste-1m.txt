@@ -1,0 +1,1 @@
+Reexecutar baterias após ajuste de consultas por favorecido.
