@@ -31,7 +31,7 @@
  const num=v=>{if(typeof v==='number')return Number.isFinite(v)?v:0;const s=String(v??'').replace(/[^0-9,.-]/g,'');const z=s.includes(',')?s.replace(/\./g,'').replace(',','.'):s;const x=Number(z);return Number.isFinite(x)?x:0};
  const source=d=>'Fonte: '+(d?.source_name||d?.title||'base do dashboard')+'\nBase atualizada em: '+(globalThis.__agentData?.source_updated_at||'data não informada');
  const dateOrderAnswer=q=>{
-   const s=c(q),intent=/((?:ordem bancaria|ordens bancarias)|obs?\b)/.test(s);
+   const s=c(q),intent=/((?:ordem bancaria|ordens bancarias)|obs?\b|pagamentos?)/.test(s);
    if(!intent)return null;
    const raw=String(q||''),day=raw.match(/\b(\d{1,2})[\/.-](\d{1,2})[\/.-](20\d{2})\b/);
    const months={janeiro:0,fevereiro:1,marco:2,abril:3,maio:4,junho:5,julho:6,agosto:7,setembro:8,outubro:9,novembro:10,dezembro:11};
