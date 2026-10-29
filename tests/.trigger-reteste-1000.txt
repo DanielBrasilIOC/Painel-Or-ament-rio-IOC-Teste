@@ -1,0 +1,1 @@
+Reexecutar 1000 e 1 milhão após ajuste de perguntas com identificador.
