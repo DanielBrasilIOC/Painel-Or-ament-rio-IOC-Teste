@@ -30,7 +30,7 @@ const rows=d=>Array.isArray(d?.rows)?d.rows:[];
  const daily=data.datasets.find(d=>d.id==='diarias_pagas');
  const unique=new Map();
  for(const r of rows(daily)){
-   const p=String(r.observacao||'').match(/\\bPCDP\\s*[:#-]?\\s*([A-Z0-9][A-Z0-9/-]*)/i);
+   const p=String(r.observacao||'').match(/\bPCDP\s*[:#-]?\s*([A-Z0-9][A-Z0-9/-]*)/i);
    if(p&&r.favorecido)unique.set(norm(r.favorecido)+'|'+p[1].toUpperCase(),{name:r.favorecido,id:p[1].toUpperCase()});
  }
  const counts=new Map();
@@ -42,7 +42,7 @@ const rows=d=>Array.isArray(d?.rows)?d.rows:[];
  const names=ask('Liste os nomes de quem viajou');
  assert.match(names,/Pessoas com viagem identificada/i,'pedido de nomes de viajantes deve ser reconhecido');
  for(const x of expected)assert.ok(names.includes(x.name),`lista de viajantes omitiu ${x.name}`);
- console.log('DEBUG_EXPECTED_COUNT',expected.length,'ANSWER_HEAD',names.slice(0,200)); assert.ok(names.includes(String(expected.length)+' nomes'),'quantidade de pessoas deve ser informada');
+ assert.ok(names.includes(String(expected.length)+' nomes'),'quantidade de pessoas deve ser informada');
  const tripCount=ask('Quantas viagens foram realizadas?');
  assert.ok(tripCount.includes(String(unique.size)+' viagens distintas'),'total de viagens deve contar PCDPs distintos');
  console.log('AUDITORIA HUMANA: 4 cenários críticos aprovados; ranking top 10 OB, líderes de viagens, lista de viajantes e total de PCDPs.');
