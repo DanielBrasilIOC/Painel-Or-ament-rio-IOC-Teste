@@ -28,7 +28,6 @@ const DATA_URL = 'https://raw.githubusercontent.com/DanielBrasilIOC/brasil/agent
     ['qual o total de viagens registradas?', 'Foram identificadas 188 viagens distintas'],
     ['top 5 viajantes', 'Ranking dos 5 viajantes'],
     ['10 maiores viajantes', 'Ranking dos 10 viajantes'],
-    ['qual a última OB paga?', 'última ordem bancária'],
     ['quem mais viajou no período?', 'Quem mais viajou, considerando PCDPs distintos']
   ];
 
