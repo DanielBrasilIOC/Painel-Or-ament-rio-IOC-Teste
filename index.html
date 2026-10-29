@@ -849,7 +849,7 @@ async function load(manual=false){
  statusEl.textContent=manual?'Recarregando dados publicados…':'Carregando dados publicados…';
  statusEl.style.display='block';
  try{
-  const response=await fetch('https://raw.githubusercontent.com/DanielBrasilIOC/brasil/main/data.json?ts='+Date.now(),{cache:'no-store'});
+  const response=await fetch('https://raw.githubusercontent.com/DanielBrasilIOC/brasil/agente-teste/data.json?ts='+Date.now(),{cache:'no-store'});
   if(!response.ok)throw new Error('Falha ao consultar data.json (HTTP '+response.status+').');
   const payload=await response.json();
   if(!Array.isArray(payload.datasets))throw new Error('A estrutura publicada não contém a lista de bases esperada.');
