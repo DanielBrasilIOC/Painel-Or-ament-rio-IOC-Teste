@@ -163,3 +163,68 @@
  globalThis.answer=(q)=>dateOrderAnswer(q)||financeBreakdownAnswer(q)||repasseSupplierAnswer(q)||datasetFieldsAnswer(q)||personTotalAnswer(q)||topOb(q)||travelAnswer(q)||aggregateAnswer(q)||previous(q);
  globalThis.__answer=globalThis.answer;
 })();
+
+/* Correção de prioridade: consultas específicas antes de agregações genéricas. */
+(()=>{
+ const previous=globalThis.answer;
+ const data=()=>globalThis.__agentData;
+ const n=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+ const c=s=>n(s).replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();
+ const ds=id=>data()?.datasets?.find(x=>x.id===id);
+ const rs=d=>Array.isArray(d?.rows)?d.rows:[];
+ const brl=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+ const val=v=>{if(typeof v==='number')return v;const s=String(v??'').replace(/[^0-9,.-]/g,'');const z=s.includes(',')?s.replace(/\./g,'').replace(',','.'):s;const x=Number(z);return Number.isFinite(x)?x:0};
+ const explicit=q=>{
+  const s=c(q),map=[['saldo financeiro','financeiro'],['restos a pagar','restos'],['empenhos 2026','empenhos'],['saldo orcamentario','orcamentario'],['aguardando repasse','repasses'],['ordens bancarias pagas','ordens_bancarias'],['ordens bancarias','ordens_bancarias'],['publicacoes pagas','publicacoes_pagas'],['artigos cientificos','publicacoes_pagas'],['diarias pagas','diarias_pagas']];
+  const hit=map.filter(x=>s.includes(x[0])).sort((a,b)=>b[0].length-a[0].length)[0];
+  return hit?ds(hit[1]):null;
+ };
+ const countAnswer=q=>{
+  const s=c(q);
+  if(!/(quantos|quantas|quantidade|numero de|contagem)/.test(s)||!/(registro|registros|dado|dados|item|itens|lancamento|lancamentos)/.test(s))return null;
+  const d=explicit(q);if(!d)return null;
+  const count=Number.isFinite(Number(d.detail_count))?Number(d.detail_count):rs(d).length;
+  return d.title+': '+count+' registros.\nFonte: '+(d.source_name||d.title)+'\nBase atualizada em: '+(data()?.source_updated_at||'data não informada');
+ };
+ const specificField=q=>{
+  const s=c(q),d=explicit(q);
+  if(!d||!/(registro|campo|consta|informe|mostre|localize|encontre|qual|diga)/.test(s))return null;
+  const ids=s.split(' ').filter(t=>t.length>=12&&/[0-9]/.test(t));
+  if(!ids.length)return null;
+  const records=rs(d).filter(r=>ids.some(id=>Object.values(r||{}).some(v=>c(v)===id||c(v).includes(id))));
+  if(!records.length)return 'Não encontrei o identificador informado na base '+d.title+'. Não vou presumir um resultado.\nFonte: '+(d.source_name||d.title)+'\nBase atualizada em: '+(data()?.source_updated_at||'data não informada');
+  const keys=[...new Set(records.flatMap(r=>Object.keys(r||{})))];
+  const aliases=[['natureza_codigo',['natureza codigo','codigo da natureza','codigo natureza']],['natureza',['natureza']],['fornecedor',['fornecedor']],['saldo',['saldo']],['processo',['processo']],['empenho',['numero do empenho','numero ne','empenho']],['cnpj',['cnpj']],['pi',['pi']],['programa',['programa']],['autor_emenda',['autor da emenda','autor emenda']],['ob',['ordem bancaria','numero da ob','ob']],['documento',['documento']],['valor',['valor pago','valor']],['data_pagamento',['data de pagamento','data do pagamento','data pagamento']],['observacao',['observacao']],['situacao_prioridade',['situacao prioridade','situacao']]];
+  let key=keys.filter(k=>s.includes(c(k.replace(/_/g,' ')))).sort((a,b)=>c(b).length-c(a).length)[0];
+  if(!key){const alias=aliases.find(x=>x[1].some(p=>s.includes(p)));if(alias)key=keys.find(k=>k===alias[0]);}
+  if(!key)return null;
+  const vals=[...new Set(records.map(r=>String(r[key]??'').trim()).filter(Boolean))];
+  if(!vals.length)return 'O campo '+key+' está vazio no registro localizado.\nFonte: '+(d.source_name||d.title);
+  return 'Campo consultado: '+key+'\nResultado(s): '+vals.join('; ')+'\nRegistros correspondentes: '+records.length+'\n\nFonte: '+(d.source_name||d.title)+'\nBase atualizada em: '+(data()?.source_updated_at||'data não informada');
+ };
+ const personTotal=q=>{
+  const s=c(q);
+  if(!/(quanto|total|soma|valor|recebeu|recebido|pagou|pago|pagamento)/.test(s))return null;
+  const d=explicit(q);if(!d||!/(favorecido|beneficiario|fornecedor|nome)/.test(s))return null;
+  const sample=rs(d)[0]||{},nameKey=Object.keys(sample).find(k=>/favorecido|beneficiario|fornecedor|nome/.test(n(k)));
+  const valueKey=Object.keys(sample).find(k=>['valor','saldo','total'].includes(n(k)))||Object.keys(sample).find(k=>/valor|saldo|total/.test(n(k)));
+  if(!nameKey||!valueKey)return null;
+  const names=[...new Set(rs(d).map(r=>String(r[nameKey]??'').trim()).filter(Boolean))].sort((a,b)=>b.length-a.length);
+  const name=names.find(x=>s.includes(c(x)));if(!name)return null;
+  const hits=rs(d).filter(r=>c(r[nameKey])===c(name)),total=hits.reduce((sum,r)=>sum+val(r[valueKey]),0);
+  return 'Total identificado para '+name+': '+brl(total)+'\nRegistros considerados: '+hits.length+'\n\nFonte: '+(d.source_name||d.title)+'\nBase atualizada em: '+(data()?.source_updated_at||'data não informada');
+ };
+ const datasetFields=q=>{
+  const s=c(q);if(!/(campo|campos|coluna|colunas)/.test(s))return null;
+  const d=explicit(q);if(!d)return null;
+  const fields=[...new Set(rs(d).flatMap(r=>Object.keys(r||{})))];
+  return 'Campos disponíveis em '+d.title+':\n'+fields.join(', ')+'\nRegistros consultados: '+rs(d).length+'\nFonte: '+(d.source_name||d.title)+'\nBase atualizada em: '+(data()?.source_updated_at||'data não informada');
+ };
+ const aggregate=q=>{
+  const s=c(q);if(!/(quanto|total|soma|valor|saldo|financeiro|montante)/.test(s))return null;
+  const d=explicit(q);if(!d||/por fonte|por origem|por vinculacao/.test(s))return null;
+  return d.title+': '+brl(d.total)+'\nRegistros: '+(d.detail_count??rs(d).length)+'\nFonte: '+(d.source_name||d.title)+'\nBase atualizada em: '+(data()?.source_updated_at||'data não informada');
+ };
+ globalThis.answer=q=>countAnswer(q)||specificField(q)||datasetFields(q)||personTotal(q)||aggregate(q)||previous(q);
+ globalThis.__answer=globalThis.answer;
+})();
