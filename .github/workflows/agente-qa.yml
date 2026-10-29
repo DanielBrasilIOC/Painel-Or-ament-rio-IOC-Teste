@@ -2,7 +2,7 @@ name: Testes do Assistente IOC
 on:
   push:
     branches:
-      - agente-teste
+      - main
   workflow_dispatch:
 jobs:
   testes:
@@ -12,5 +12,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Validar respostas e agregações
+      - name: Validar respostas e agregações do agente
         run: node tests/agente-qa.test.js
