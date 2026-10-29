@@ -68,7 +68,7 @@ const DATA_URL = 'https://raw.githubusercontent.com/DanielBrasilIOC/brasil/agent
     ['quanto temos de saldo orçamentário?', '9.892,63'],
     ['qual o total de restos a pagar?', '4.526.062,32'],
     ['quanto está aguardando repasse?', '1.481.215,65'],
-    ['quantas solicitações aguardam repasse?', '63 registros'],
+    ['quantas solicitações aguardam repasse?', 'Registros: 63'],
     ['quais fornecedores aguardam repasse?', 'não identificam fornecedores individualizados'],
     ['quais campos existem no saldo financeiro?', 'uge, unidade, fonte, vinculo, saldo'],
     ['quanto foi pago em setembro?', '7.656.771,63'],
