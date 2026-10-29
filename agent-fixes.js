@@ -57,7 +57,8 @@
    if(!orderIntent||!rankIntent)return null;
    const d=ds('ordens_bancarias');if(!d||!rs(d).length)return 'A base de ordens bancárias não está disponível para o ranking.';
    const m=s.match(/top\s*(\d+)/)||s.match(/\b(\d+)\s+maiores?\b/);
-   const singleIntent=/\b(quem recebeu|quem pagou|qual foi|qual e|qual o|maior pagamento|maior valor|maior ob|maior ordem bancaria)\b/.test(s)&&!m;\n   const limit=Math.min(50,Math.max(1,Number(m?.[1]||(singleIntent?1:10))));
+   const singleIntent=/\b(quem recebeu|quem pagou|qual foi|qual e|qual o|maior pagamento|maior valor|maior ob|maior ordem bancaria)\b/.test(s)&&!m;
+   const limit=Math.min(50,Math.max(1,Number(m?.[1]||(singleIntent?1:10))));
    const k=Object.keys(rs(d)[0]||{}),vk=k.find(x=>['valor','valor_ob'].includes(n(x)))||k.find(x=>/valor/.test(n(x)));
    if(!vk)return 'A base de ordens bancárias não possui um campo de valor identificável; não é possível montar o ranking.';
    const ok=k.find(x=>['ob','documento','ordem_bancaria'].includes(n(x)))||'ob',fk=k.find(x=>/favorecido|beneficiario|fornecedor/.test(n(x)));
