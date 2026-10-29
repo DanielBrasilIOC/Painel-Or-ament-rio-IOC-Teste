@@ -66,7 +66,7 @@
  const travelAnswer=q=>{
    const s=c(q),intent=/(viaj|viagem|viagens|viajada|viajantes|pcdp)/.test(s);if(!intent)return null;
    const t=tripData();if(!t||!t.d)return 'A base de diárias pagas não está disponível para consultar as viagens.';
-   const ranked=/(quem mais|mais viajou|maior numero de viagens|maior quantidade de viagens|quem viajou mais|top\s*\d+|\d+\s+maiores)/.test(s);
+   const ranked=/(quem mais|mais viajou|fez mais viagens|realizou mais viagens|maior numero de viagens|maior quantidade de viagens|quem viajou mais|top\s*\d+|\d+\s+maiores)/.test(s);
    const list=/(liste|listar|lista|nomes|quais pessoas|quem viajou|pessoas que viajaram|relacao de viajantes|relação de viajantes)/.test(s);
    const count=/(quantas viagens|quantidade de viagens|numero de viagens|número de viagens|total de viagens)/.test(s);
    if(!t.items.length)return 'Não localizei identificadores PCDP nas observações dos registros de diárias. Não é possível contar viagens com segurança.';
