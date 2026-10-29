@@ -97,5 +97,18 @@ function monthRange(month,year=2026){const m={janeiro:1,fevereiro:2,marco:3,abri
   const unknown=ask('Qual foi o valor pago ao favorecido XYZ_INEXISTENTE_987?');
   assert.ok(/não consegui|não encontrei|não há|não fornec|correspondência/i.test(unknown),'pergunta sem correspondência não deve inventar resposta');
 
+  // Perguntas livres, ausência de campos e ação de limpar devem funcionar na interface.
+  const missingField=ask('Qual é o telefone do favorecido?');
+  assert.match(missingField,/não consta em nosso banco de dados/i,'campo ausente deve ser declarado explicitamente');
+  const ui=fs.readFileSync(require('node:path').join(__dirname,'..','consulta.html'),'utf8');
+  assert.ok(!/class="examples"/.test(ui),'a interface não deve exibir perguntas predefinidas');
+  assert.ok(/id="clear"/.test(ui),'a interface deve oferecer o botão Limpar pergunta');
+  els.q.value='pergunta de teste';
+  els.answer.textContent='resposta anterior';
+  els.answer.hidden=false;
+  context.clearQuestion();
+  assert.equal(els.q.value,'','Limpar pergunta deve esvaziar o campo');
+  assert.equal(els.answer.textContent,'','Limpar pergunta deve remover a resposta anterior');
+  assert.equal(els.answer.hidden,true,'a resposta anterior deve ficar oculta após limpar');
   console.log(`AUDITORIA PASSOU: ${checks.length} consultas + integridade dos 8 datasets.`);
 })().catch(e=>{console.error(e);process.exitCode=1;});
