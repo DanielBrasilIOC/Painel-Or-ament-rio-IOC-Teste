@@ -17,7 +17,7 @@ Este é um ambiente de teste separado do repositório de produção.
 - totais por mês quando os registros possuem uma data reconhecível.
 
 ## Publicação
-O workflow `.github/workflows/pages.yml` publica este repositório independente no GitHub Pages quando há commit em `main` ou execução manual.
+A origem de publicação deve estar configurada como **GitHub Actions** em Settings → Pages. O workflow `.github/workflows/pages.yml` publica este repositório independente no GitHub Pages quando há commit em `main` ou execução manual.
 
 ## Limitações conhecidas
 - A interpretação de linguagem natural é baseada em correspondência de palavras e padrões, não em IA generativa.
