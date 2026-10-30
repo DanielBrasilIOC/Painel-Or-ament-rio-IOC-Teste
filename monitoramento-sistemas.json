@@ -6,7 +6,7 @@
   "frequency_target_seconds": 1800,
   "schedule_target": "A cada 30 minutos, de segunda a sexta-feira (horário UTC configurado no GitHub Actions)",
   "last_run_duration_ms": 8563,
-  "disclaimer": "Somente endpoints públicos e acesso às páginas oficiais de referência são verificados. Não testa login, transações ou módulos internos. Conteúdo de comunicados não é classificado automaticamente.",
+  "disclaimer": "Endpoints públicos e acesso às páginas oficiais de referência são verificados. Não testa login, transações ou módulos internos. Falhas de rede sem resposta HTTP são classificadas como não verificadas, não como indisponibilidade confirmada.",
   "systems": [
     {
       "id": "siafi",
@@ -108,8 +108,8 @@
       "status": "NAO_VERIFICADO",
       "detail": "Falha ao confirmar a conexão pública (ConnectionResetError); pode ser bloqueio de rede ou falha transitória, não prova indisponibilidade do sistema.",
       "checked_at": "2026-10-30T20:51:01Z",
-      "failure_streak": 2,
-      "alert_state": "FALHA_ALERTADA",
+      "failure_streak": 0,
+      "alert_state": "SEM_ALERTA",
       "operational": {
         "status": "NAO_VERIFICADO_AUTOMATICAMENTE",
         "source_url": "https://www.gov.br/pncp/pt-br/central-de-conteudo/comunicados/comunicados",
@@ -171,12 +171,5 @@
       "not_verified": 1
     }
   ],
-  "alerts": [
-    {
-      "created_at": "2026-10-30T20:50:23Z",
-      "system": "PNCP",
-      "type": "FALHA_CONSECUTIVA",
-      "message": "PNCP: duas ou mais falhas consecutivas no endpoint público."
-    }
-  ]
+  "alerts": []
 }
