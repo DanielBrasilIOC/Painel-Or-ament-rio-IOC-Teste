@@ -173,7 +173,7 @@ function recordQuery(q,d,p){
 function exactPaymentAnswer(raw){
  const q=compact(raw);
  if(!/\b(foi pago|foi paga|pagaram|pago|paga|pagamento|pagou|houve pagamento)\b/.test(q))return null;
- const m=String(raw||'').match(/r\\$\\s*([\\d.]+(?:,\\d{1,2})?)/i)||String(raw||'').match(/\\b(\\d+(?:\\.\\d{3})*(?:,\\d{1,2})?|\\d+(?:,\\d+)?)\\s*(mil|milhao|milhoes)?\\b/i);
+ const m=String(raw||'').match(/r\$\s*([\d.]+(?:,\d{1,2})?)/i)||String(raw||'').match(/\b(\d+(?:\.\d{3})*(?:,\d{1,2})?|\d+(?:,\d+)?)\s*(mil|milhao|milhoes)?\b/i);
  if(!m)return null;
  let target=money(m[1]);if(m[2]==='mil')target*=1000;if(m[2]?.startsWith('milhao'))target*=1000000;
  const d=ds('ordens_bancarias');if(!d)return null;
@@ -190,9 +190,9 @@ function exactPaymentAnswer(raw){
  const personRows=rows(d).filter(r=>compact(r.favorecido)===compact(person));
  const matches=personRows.filter(r=>Math.abs(money(r.valor)-target)<0.005);
  if(matches.length){
-  return 'Sim. Identifiquei '+matches.length+' pagamento(s) de exatamente '+brl(target)+' para '+person+':\\n'+matches.map(r=>'• OB '+(r.ob||'não informada')+' — '+dateLabel(r)+' — '+brl(money(r.valor))).join('\\n')+'\\n\\nRegistros do favorecido analisados: '+personRows.length+'.\\n'+source(d);
+  return 'Sim. Identifiquei '+matches.length+' pagamento(s) de exatamente '+brl(target)+' para '+person+':\n'+matches.map(r=>'• OB '+(r.ob||'não informada')+' — '+dateLabel(r)+' — '+brl(money(r.valor))).join('\n')+'\n\nRegistros do favorecido analisados: '+personRows.length+'.\n'+source(d);
  }
- return 'Não identifiquei pagamento de exatamente '+brl(target)+' para '+person+' na base consultada.\\nRegistros do favorecido analisados: '+personRows.length+'.\\n'+source(d);
+ return 'Não identifiquei pagamento de exatamente '+brl(target)+' para '+person+' na base consultada.\nRegistros do favorecido analisados: '+personRows.length+'.\n'+source(d);
 }
 function answer(q0){
  const raw=String(q0??''),q=compact(raw);
