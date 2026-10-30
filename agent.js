@@ -179,7 +179,7 @@ function answer(q0){
  if(d&&d.id==='ordens_bancarias'&&/(top\s*\d+|maiores?|maior valor|maior pagamento|maior ob|maior ordem)/.test(q))return rankingOB(raw,d,p);
  if(d&&d.id==='ordens_bancarias'&&/(ultima|ultimo|mais recente|por ultimo)/.test(q))return latestOB(raw,d,p);
  if(d&&/(acima de|maior que|superior a|superiores a|mais de|ultrapass)/.test(q)){const r=thresholdAnswer(raw,d,p);if(r)return r}
- if(d&&/(quanto|total|soma|valor total|montante|saldo total|quanto temos|quanto ha|quanto há)/.test(q)){
+ if(d&&/(quanto|total|soma|valor total|montante|saldo|quanto temos|quanto ha|quanto há)/.test(q)){
   const person=exactPerson(raw,d,p);if(person)return person;
   return datasetSummary(d,p);
  }
