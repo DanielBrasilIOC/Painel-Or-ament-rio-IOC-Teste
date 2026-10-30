@@ -1,0 +1,35 @@
+name: Integrar monitoramento no dashboard teste
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/scripts/integrar_monitoramento_no_dashboard.py'
+      - 'index.html'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  integrar:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Integrar aba de monitoramento
+        run: python .github/scripts/integrar_monitoramento_no_dashboard.py
+
+      - name: Publicar alteração
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'Nenhuma alteração necessária.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Integra aba de monitoramento ao dashboard teste'
+          git push
