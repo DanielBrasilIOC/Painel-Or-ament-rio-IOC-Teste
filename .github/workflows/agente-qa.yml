@@ -14,3 +14,7 @@ jobs:
           node-version: 20
       - name: Validar respostas e agregações do agente
         run: node tests/quality.test.cjs
+      - name: Validar perguntas em linguagem humana
+        run: node tests/human-questions.test.cjs
+      - name: Validar consultas de diretoria
+        run: node tests/directoria.test.cjs
