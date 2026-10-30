@@ -13,4 +13,4 @@ jobs:
         with:
           node-version: 20
       - name: Validar respostas e agregações do agente
-        run: node tests/agente-qa.test.js
+        run: node tests/quality.test.cjs
