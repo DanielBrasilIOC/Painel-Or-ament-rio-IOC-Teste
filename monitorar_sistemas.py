@@ -15,7 +15,7 @@ SYSTEMS = [
  {"id":"contratos","name":"Contratos.gov.br","url":"https://contratos.comprasnet.gov.br/login","scope":"Página pública de entrada; módulos autenticados e transações não são testados.","official_info":"https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados"},
  {"id":"compras","name":"Compras.gov.br","url":"https://www.gov.br/compras/pt-br","scope":"Portal público; login, sessão de disputa e operações internas não são testados.","official_info":"https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados"},
  {"id":"sicaf","name":"SICAF","url":"https://www.gov.br/compras/pt-br/sistemas/conheca-o-compras/sicaf-digital","scope":"Página pública informativa; acesso autenticado e funcionalidades internas do SICAF não são testados.","official_info":"https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados"},
- {"id":"pncp","name":"PNCP","url":"https://pncp.gov.br/app/","scope":"Portal público; APIs, autenticação e operações de publicação não são testadas.","official_info":"https://www.gov.br/pncp/pt-br/central-de-conteudo/comunicados/comunicados"},
+ {"id":"pncp","name":"PNCP","url":"https://pncp.gov.br/app/area-de-trabalho","scope":"Portal público; APIs, autenticação e operações de publicação não são testadas.","official_info":"https://www.gov.br/pncp/pt-br/central-de-conteudo/comunicados/comunicados"},
  {"id":"transferegov","name":"Transferegov.br","url":"https://portal.transferegov.sistema.gov.br/","scope":"Portal público; autenticação e operações internas não são testadas.","official_info":"https://www.gov.br/transferegov/pt-br"},
 ]
 
