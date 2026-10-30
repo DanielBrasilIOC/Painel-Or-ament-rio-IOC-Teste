@@ -174,8 +174,6 @@ function exactPaymentAnswer(raw){
  const q=compact(raw);
  if(!/\b(foi pago|foi paga|pagaram|pago|paga|pagamento|pagou|houve pagamento)\b/.test(q))return null;
  const m=String(raw||'').match(/r\$\s*([\d.]+(?:,\d{1,2})?)/i)||String(raw||'').match(/\b(\d+(?:\.\d{3})*(?:,\d{1,2})?|\d+(?:,\d+)?)\s*(mil|milhao|milhoes)?\b/i);
- if(!m)return null;
- let target=money(m[1]);if(m[2]==='mil')target*=1000;if(m[2]?.startsWith('milhao'))target*=1000000;
  const d=ds('ordens_bancarias');if(!d)return null;
  const names=[...new Set(rows(d).map(r=>String(r.favorecido??'').trim()).filter(Boolean))].sort((a,b)=>compact(b).length-compact(a).length);
  let person=names.find(n=>q.includes(compact(n)));
@@ -188,6 +186,12 @@ function exactPaymentAnswer(raw){
  }
  if(!person)return null;
  const personRows=rows(d).filter(r=>compact(r.favorecido)===compact(person));
+ if(!m){
+  if(!/(quanto foi pago|total pago|quanto pagaram|pagamentos? para|pagamento para)/.test(q))return null;
+  const total=personRows.reduce((a,r)=>a+money(r.valor),0);
+  return 'Total pago a '+person+': '+brl(total)+'\nRegistros considerados: '+personRows.length+'.\n'+source(d);
+ }
+ let target=money(m[1]);if(m[2]==='mil')target*=1000;if(m[2]?.startsWith('milhao'))target*=1000000;
  const matches=personRows.filter(r=>Math.abs(money(r.valor)-target)<0.005);
  if(matches.length){
   return 'Sim. Identifiquei '+matches.length+' pagamento(s) de exatamente '+brl(target)+' para '+person+':\n'+matches.map(r=>'• OB '+(r.ob||'não informada')+' — '+dateLabel(r)+' — '+brl(money(r.valor))).join('\n')+'\n\nRegistros do favorecido analisados: '+personRows.length+'.\n'+source(d);
