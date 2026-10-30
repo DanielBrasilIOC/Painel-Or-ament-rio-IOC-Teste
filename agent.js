@@ -42,7 +42,8 @@ function periodOf(q){
  const month=Object.keys(monthMap).find(x=>new RegExp('\\b'+x+'\\b').test(s));
  const ym=s.match(/\b(20\d{2})\b/),year=Number(ym?.[1]||base?.source_updated_at?.slice(0,4)||new Date().getFullYear());
  if(month){const i=monthMap[month];return{start:iso(new Date(year,i,1)),end:iso(new Date(year,i+1,1)),label:month.charAt(0).toUpperCase()+month.slice(1)+' de '+year}}
- const yearContext=/\\b(ano|exercicio|periodo|durante|pagos? em|pagamento em|recebeu em|no ano|no exercicio)\\b/.test(s)||(/\\bem\\s+20\\d{2}\\b/.test(s)&&! /\\bempenhos?\\s+20\\d{2}\\b/.test(s));\n if(ym&&yearContext)return{start:year+'-01-01',end:(year+1)+'-01-01',label:String(year)};
+ const yearContext=/\b(ano|exercicio|periodo|durante|pagos? em|pagamento em|recebeu em|no ano|no exercicio)\b/.test(s)||(/\bem\s+20\d{2}\b/.test(s)&&! /\bempenhos?\s+20\d{2}\b/.test(s));
+ if(ym&&yearContext)return{start:year+'-01-01',end:(year+1)+'-01-01',label:String(year)};
  return null;
 }
 function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
@@ -117,7 +118,8 @@ function travelAnswer(q,d,p){
 function exactPerson(q,d,p){
  const nk=nameKey(d),vk=valueKey(d);if(!nk||!vk)return null;
  const s=compact(q),names=[...new Set(rows(d).map(r=>String(r[nk]??'').trim()).filter(Boolean))].sort((a,b)=>compact(b).length-compact(a).length);
- const foundName=names.find(x=>s.includes(compact(x)));
+ let foundName=names.find(x=>s.includes(compact(x)));
+ if(!foundName){const partial=names.filter(x=>compact(x).split(' ').some(t=>t.length>=5&&(' '+s+' ').includes(' '+t+' ')));if(partial.length===1)foundName=partial[0];else if(partial.length>1)return 'Encontrei mais de um favorecido compatível com o nome informado. Informe o nome completo para evitar somar pessoas diferentes.'}
  if(!foundName)return null;
  let found=rows(d).filter(r=>compact(r[nk])===compact(foundName));if(p)found=found.filter(r=>within(r,p));
  if(!found.length)return 'Não encontrei registros para '+foundName+(p?' em '+p.label:'')+'.\n'+source(d);
