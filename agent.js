@@ -128,7 +128,7 @@ function exactPerson(q,d,p){
  return 'Total pago a '+foundName+': '+brl(total)+'\nRegistros considerados: '+found.length+(p?'\nPeríodo: '+p.label:'')+'\n'+source(d);
 }
 function thresholdAnswer(q,d,p){
- const s=compact(q);if(!/(acima de|maior que|superior a|superiores a|mais de|ultrapass)/.test(s))return null;
+ const s=compact(q);if(!/(acima de|maior que|superior a|superiores a|mais de|superaram|superou|ultrapassaram|ultrapassou|ultrapass)/.test(s))return null;
  const raw=String(q||'').match(/r\$\s*([\d.]+(?:,\d{1,2})?)/i)||String(q||'').match(/\b([\d.]+(?:,\d{1,2})?)\s*(mil|milhao|milhoes)?\b/i);
  if(!raw)return null;
  let threshold=money(raw[1]);if(raw[2]==='mil')threshold*=1000;if(raw[2]?.startsWith('milhao'))threshold*=1000000;
