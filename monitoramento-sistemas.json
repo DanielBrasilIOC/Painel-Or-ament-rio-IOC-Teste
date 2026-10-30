@@ -1,11 +1,11 @@
 {
   "environment": "TESTE",
-  "checked_at": "2026-10-30T20:49:51Z",
+  "checked_at": "2026-10-30T20:50:23Z",
   "collector": "monitorar_sistemas.py",
   "scheduler_status": "AGENDAMENTO_CONFIGURADO_AGUARDANDO_EXECUCAO_AGENDADA",
   "frequency_target_seconds": 1800,
   "schedule_target": "A cada 30 minutos, de segunda a sexta-feira (horário UTC configurado no GitHub Actions)",
-  "last_run_duration_ms": 8638,
+  "last_run_duration_ms": 10411,
   "disclaimer": "Somente endpoints públicos e acesso às páginas oficiais de referência são verificados. Não testa login, transações ou módulos internos. Conteúdo de comunicados não é classificado automaticamente.",
   "systems": [
     {
@@ -15,11 +15,11 @@
       "scope": "Portal público; autenticação, consultas e operações internas não são testadas.",
       "official_info": "https://www.gov.br/tesouronacional/pt-br/siafi/consultas-e-servicos/calendario-disponibilidade-siafi",
       "http_status": 200,
-      "latency_ms": 618,
+      "latency_ms": 789,
       "final_url": "https://siafi.tesouro.gov.br/",
       "status": "ACESSIVEL",
       "detail": "Endpoint público respondeu; isso não comprova autenticação nem funcionamento de módulos internos.",
-      "checked_at": "2026-10-30T20:49:51Z",
+      "checked_at": "2026-10-30T20:50:23Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -37,11 +37,11 @@
       "scope": "Página pública de entrada; módulos autenticados e transações não são testados.",
       "official_info": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
       "http_status": 200,
-      "latency_ms": 1946,
+      "latency_ms": 2651,
       "final_url": "https://contratos.comprasnet.gov.br/login",
       "status": "ACESSIVEL",
       "detail": "Endpoint público respondeu; isso não comprova autenticação nem funcionamento de módulos internos.",
-      "checked_at": "2026-10-30T20:49:51Z",
+      "checked_at": "2026-10-30T20:50:23Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -59,11 +59,11 @@
       "scope": "Portal público; login, sessão de disputa e operações internas não são testados.",
       "official_info": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
       "http_status": 200,
-      "latency_ms": 417,
+      "latency_ms": 488,
       "final_url": "https://www.gov.br/compras/pt-br",
       "status": "ACESSIVEL",
       "detail": "Endpoint público respondeu; isso não comprova autenticação nem funcionamento de módulos internos.",
-      "checked_at": "2026-10-30T20:49:51Z",
+      "checked_at": "2026-10-30T20:50:23Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -81,11 +81,11 @@
       "scope": "Página pública informativa; acesso autenticado e funcionalidades internas do SICAF não são testados.",
       "official_info": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
       "http_status": 200,
-      "latency_ms": 413,
+      "latency_ms": 484,
       "final_url": "https://www.gov.br/compras/pt-br/sistemas/conheca-o-compras/sicaf-digital",
       "status": "ACESSIVEL",
       "detail": "Endpoint público respondeu; isso não comprova autenticação nem funcionamento de módulos internos.",
-      "checked_at": "2026-10-30T20:49:51Z",
+      "checked_at": "2026-10-30T20:50:23Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -99,17 +99,17 @@
     {
       "id": "pncp",
       "name": "PNCP",
-      "url": "https://pncp.gov.br/app/",
+      "url": "https://pncp.gov.br/app/area-de-trabalho",
       "scope": "Portal público; APIs, autenticação e operações de publicação não são testadas.",
       "official_info": "https://www.gov.br/pncp/pt-br/central-de-conteudo/comunicados/comunicados",
       "http_status": null,
-      "latency_ms": 586,
+      "latency_ms": 739,
       "final_url": null,
       "status": "INSTABILIDADE",
       "detail": "Falha na conexão pública: ConnectionResetError.",
-      "checked_at": "2026-10-30T20:49:51Z",
-      "failure_streak": 1,
-      "alert_state": "SEM_ALERTA",
+      "checked_at": "2026-10-30T20:50:23Z",
+      "failure_streak": 2,
+      "alert_state": "FALHA_ALERTADA",
       "operational": {
         "status": "NAO_VERIFICADO_AUTOMATICAMENTE",
         "source_url": "https://www.gov.br/pncp/pt-br/central-de-conteudo/comunicados/comunicados",
@@ -125,11 +125,11 @@
       "scope": "Portal público; autenticação e operações internas não são testadas.",
       "official_info": "https://www.gov.br/transferegov/pt-br",
       "http_status": 200,
-      "latency_ms": 677,
+      "latency_ms": 1071,
       "final_url": "https://portal.transferegov.sistema.gov.br/",
       "status": "ACESSIVEL",
       "detail": "Endpoint público respondeu; isso não comprova autenticação nem funcionamento de módulos internos.",
-      "checked_at": "2026-10-30T20:49:51Z",
+      "checked_at": "2026-10-30T20:50:23Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -155,7 +155,21 @@
       "accessible": 5,
       "instability": 1,
       "not_verified": 6
+    },
+    {
+      "checked_at": "2026-10-30T20:50:23Z",
+      "duration_ms": 10411,
+      "accessible": 5,
+      "instability": 1,
+      "not_verified": 6
     }
   ],
-  "alerts": []
+  "alerts": [
+    {
+      "created_at": "2026-10-30T20:50:23Z",
+      "system": "PNCP",
+      "type": "FALHA_CONSECUTIVA",
+      "message": "PNCP: duas ou mais falhas consecutivas no endpoint público."
+    }
+  ]
 }
