@@ -12,6 +12,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Validar contrato e integridade da base de teste
+        run: node tests/data-contract.test.cjs
       - name: Validar respostas e agregações do agente
         run: node tests/quality.test.cjs
       - name: Validar perguntas em linguagem humana
