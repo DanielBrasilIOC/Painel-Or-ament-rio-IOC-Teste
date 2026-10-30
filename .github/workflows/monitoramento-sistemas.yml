@@ -1,5 +1,10 @@
 name: Monitoramento público dos sistemas governamentais (TESTE)
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'monitorar_sistemas.py'
+      - '.github/workflows/monitoramento-sistemas.yml'
   schedule:
     # Segunda a sexta, a cada 30 minutos; UTC (06:00–19:30 no horário de Brasília).
     - cron: '*/30 9-22 * * 1-5'
