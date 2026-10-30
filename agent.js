@@ -42,7 +42,7 @@ function periodOf(q){
  const month=Object.keys(monthMap).find(x=>new RegExp('\\b'+x+'\\b').test(s));
  const ym=s.match(/\b(20\d{2})\b/),year=Number(ym?.[1]||base?.source_updated_at?.slice(0,4)||new Date().getFullYear());
  if(month){const i=monthMap[month];return{start:iso(new Date(year,i,1)),end:iso(new Date(year,i+1,1)),label:month.charAt(0).toUpperCase()+month.slice(1)+' de '+year}}
- if(ym)return{start:year+'-01-01',end:(year+1)+'-01-01',label:String(year)};
+ const yearContext=/\\b(ano|exercicio|periodo|durante|pagos? em|pagamento em|recebeu em|no ano|no exercicio)\\b/.test(s)||(/\\bem\\s+20\\d{2}\\b/.test(s)&&! /\\bempenhos?\\s+20\\d{2}\\b/.test(s));\n if(ym&&yearContext)return{start:year+'-01-01',end:(year+1)+'-01-01',label:String(year)};
  return null;
 }
 function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
