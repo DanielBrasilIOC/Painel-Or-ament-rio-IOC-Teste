@@ -197,7 +197,8 @@ function exactPaymentAnswer(raw){
 function answer(q0){
  const raw=String(q0??''),q=compact(raw);
  if(!base)return loadError?'Não foi possível consultar a base neste momento. A conexão falhou; isso não significa que a informação não exista.':'A base ainda está carregando. Aguarde e tente novamente.';
- if(!q)return 'Digite uma pergunta para consultar os dados.';\n const payment=exactPaymentAnswer(raw);if(payment)return payment;
+ if(!q)return 'Digite uma pergunta para consultar os dados.';
+ const payment=exactPaymentAnswer(raw);if(payment)return payment;
  if(/inventario|todos os campos|quais campos|campos disponiveis|dados disponiveis|o que tem no dashboard|quais dados/.test(q))return inventory();
  const d=chooseDataset(q),p=periodOf(raw);
  const travelIntent=/(viaj|viagem|viagens|viajante|viajantes|pcdp|diarias?)/.test(q);
