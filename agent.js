@@ -67,7 +67,8 @@ function rankingOB(q,d,p){
  let arr=rows(d).filter(r=>Number.isFinite(money(r.valor)));if(p)arr=arr.filter(r=>within(r,p));
  arr.sort((a,b)=>money(b.valor)-money(a.valor)||String(a.ob||'').localeCompare(String(b.ob||'')));
  if(!arr.length)return 'Não encontrei ordens bancárias no período solicitado.\n'+source(d);
- const single=/\\b(qual foi|qual e|qual a|qual o|maior pagamento|maior ordem|maior ob)\\b/.test(compact(q))&&!/(top\\s*\\d|\\d+\\s+maiores?)/.test(compact(q));\n const n=single?1:topN(q),shown=arr.slice(0,n);
+ const query=compact(q),single=/\b(qual foi|qual e|qual a|qual o|maior pagamento|maior ordem|maior ob)\b/.test(query)&&!/(top\s*\d|\d+\s+maiores?)/.test(query);
+ const n=single?1:topN(q),shown=arr.slice(0,n);
  return 'Ranking das '+shown.length+' maiores ordens bancárias'+(p?' em '+p.label:'')+', ordenadas pelo valor pago (maior para menor):\n'+shown.map((r,i)=>(i+1)+'. OB '+(r.ob||'não informada')+' — '+brl(money(r.valor))+' — '+(r.favorecido||'favorecido não informado')+' — '+dateLabel(r)).join('\n')+'\n\nRegistros classificados: '+arr.length+(p?'\nPeríodo considerado: '+p.label:'')+'\n'+source(d);
 }
 function latestOB(q,d,p){
