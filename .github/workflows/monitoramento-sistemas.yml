@@ -1,0 +1,32 @@
+name: Monitoramento público dos sistemas governamentais (TESTE)
+on:
+  schedule:
+    # Segunda a sexta, a cada 30 minutos; UTC (06:00–19:30 no horário de Brasília).
+    - cron: '*/30 9-22 * * 1-5'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: monitoramento-sistemas-teste
+  cancel-in-progress: false
+jobs:
+  monitorar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar ambiente de teste
+        uses: actions/checkout@v4
+      - name: Executar verificações públicas
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+        run: python3 monitorar_sistemas.py
+      - name: Persistir resultado e histórico
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add monitoramento-sistemas.json
+          if git diff --cached --quiet; then
+            echo 'Sem alteração de estado para registrar.'
+          else
+            git commit -m "Atualiza monitoramento público dos sistemas"
+            git push
+          fi
