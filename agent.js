@@ -170,10 +170,34 @@ function recordQuery(q,d,p){
  const vals=[...new Set(found.map(r=>String(r[field]??'').trim()).filter(Boolean))];
  return 'Campo consultado: '+field.replace(/_/g,' ')+'\nResultado(s): '+(vals.length?vals.slice(0,25).join('; '):'o campo está vazio nos registros localizados')+'\nRegistros correspondentes: '+found.length+(p?'\nPeríodo: '+p.label:'')+'\n'+source(d);
 }
+function exactPaymentAnswer(raw){
+ const q=compact(raw);
+ if(!/\b(foi pago|foi paga|pagaram|pago|paga|pagamento|pagou|houve pagamento)\b/.test(q))return null;
+ const m=String(raw||'').match(/r\\$\\s*([\\d.]+(?:,\\d{1,2})?)/i)||String(raw||'').match(/\\b(\\d+(?:\\.\\d{3})*(?:,\\d{1,2})?|\\d+(?:,\\d+)?)\\s*(mil|milhao|milhoes)?\\b/i);
+ if(!m)return null;
+ let target=money(m[1]);if(m[2]==='mil')target*=1000;if(m[2]?.startsWith('milhao'))target*=1000000;
+ const d=ds('ordens_bancarias');if(!d)return null;
+ const names=[...new Set(rows(d).map(r=>String(r.favorecido??'').trim()).filter(Boolean))].sort((a,b)=>compact(b).length-compact(a).length);
+ let person=names.find(n=>q.includes(compact(n)));
+ if(!person){
+  const tokens=[...new Set(names.flatMap(n=>compact(n).split(' ').filter(t=>t.length>=5)))];
+  const hits=tokens.filter(t=>(' '+q+' ').includes(' '+t+' '));
+  const candidates=names.filter(n=>compact(n).split(' ').some(t=>hits.includes(t)));
+  if(candidates.length===1)person=candidates[0];
+  else if(candidates.length>1)return 'Encontrei mais de um favorecido compatível. Informe o nome completo para confirmar o pagamento.';
+ }
+ if(!person)return null;
+ const personRows=rows(d).filter(r=>compact(r.favorecido)===compact(person));
+ const matches=personRows.filter(r=>Math.abs(money(r.valor)-target)<0.005);
+ if(matches.length){
+  return 'Sim. Identifiquei '+matches.length+' pagamento(s) de exatamente '+brl(target)+' para '+person+':\\n'+matches.map(r=>'• OB '+(r.ob||'não informada')+' — '+dateLabel(r)+' — '+brl(money(r.valor))).join('\\n')+'\\n\\nRegistros do favorecido analisados: '+personRows.length+'.\\n'+source(d);
+ }
+ return 'Não identifiquei pagamento de exatamente '+brl(target)+' para '+person+' na base consultada.\\nRegistros do favorecido analisados: '+personRows.length+'.\\n'+source(d);
+}
 function answer(q0){
  const raw=String(q0??''),q=compact(raw);
  if(!base)return loadError?'Não foi possível consultar a base neste momento. A conexão falhou; isso não significa que a informação não exista.':'A base ainda está carregando. Aguarde e tente novamente.';
- if(!q)return 'Digite uma pergunta para consultar os dados.';
+ if(!q)return 'Digite uma pergunta para consultar os dados.';\n const payment=exactPaymentAnswer(raw);if(payment)return payment;
  if(/inventario|todos os campos|quais campos|campos disponiveis|dados disponiveis|o que tem no dashboard|quais dados/.test(q))return inventory();
  const d=chooseDataset(q),p=periodOf(raw);
  const travelIntent=/(viaj|viagem|viagens|viajante|viajantes|pcdp|diarias?)/.test(q);
