@@ -18,7 +18,7 @@ const rows=d=>Array.isArray(d?.rows)?d.rows:[];
  const top=check('top 10 OB','Top 10 ordens bancárias',String(sorted[0].ob));
  for(const r of sorted.slice(0,10))assert.ok(top.includes(String(r.ob)),'Top 10 omitiu OB '+r.ob);
  assert.ok(top.includes(brl(money(sorted[0].valor))),'Top 10 não exibiu valor correto');
- const latest=rows(ob).slice().sort((a,b)=>{const dt=x=>{const m=String(x.data_pagamento||x.data||'').match(/(\d{2})\/(\d{2})\/(\d{4})/);return m?m[3]+'-'+m[2]+'-'+m[1]:''};return dt(b).localeCompare(dt(a))})[0];
+ const latest=rows(ob).slice().sort((a,b)=>{const dt=x=>{const m=String(x.data_pagamento||x.data||'').match(/(\d{2})\/(\d{2})\/(\d{4})/);return m?m[3]+'-'+m[2]+'-'+m[1]:''};return dt(b).localeCompare(dt(a))||String(b.ob||'').localeCompare(String(a.ob||''))})[0];
  check('última OB','Qual foi a última ordem bancária paga?',String(latest.ob));
  const daily=get('diarias_pagas'),map=new Map();
  for(const r of rows(daily)){const m=String(r.observacao||'').match(/\bPCDP\s*[:#-]?\s*([A-Z0-9][A-Z0-9/-]*)/i);if(m&&r.favorecido){const k=norm(r.favorecido)+'|'+m[1].toUpperCase();if(!map.has(k))map.set(k,{name:r.favorecido,id:m[1].toUpperCase()})}}
