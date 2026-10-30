@@ -1,21 +1,17 @@
 # Agente de Consulta — Painel Financeiro e Orçamentário IOC (Teste)
 
-## Separação e segurança
-- Repositório independente: `DanielBrasilIOC/Painel-Or-ament-rio-IOC-Teste`.
-- A interface consulta em modo somente leitura o `data.json` público de `DanielBrasilIOC/brasil`.
-- Nenhuma alteração é feita no repositório ou no dashboard de produção.
-- A fonte de dados e a data de atualização são mostradas nas respostas.
+## Separação dos ambientes
+- Este repositório publica somente o agente e sua interface de teste.
+- O agente consulta exclusivamente `DanielBrasilIOC/brasil` na branch `agente-teste`, arquivo `data.json`.
+- Não consulta a branch `main` do repositório de produção e não altera dados nem código de produção.
+- A base de teste contém oito conjuntos de dados; fonte e data de atualização são exibidas nas respostas.
 
-## Interface
-- Campo de pergunta livre, sem botões de perguntas predefinidas.
-- Botão **Consultar** e botão **Limpar pergunta**, que limpa o campo e a resposta anterior.
-- Respostas acessíveis por teclado e em telas pequenas.
-- Erros de conexão são diferenciados de informações que não existem na base.
+## Motor de respostas
+O agente foi consolidado em um único motor, sem a cadeia de sobrescritas de funções e correções independentes. As respostas são calculadas diretamente dos registros carregados. O motor identifica bases, totais, contagens, rankings de ordens bancárias, última OB por data, pagamentos acima de limites, totais por favorecido, viagens por PCDP e consultas a campos de registros identificados.
 
-## Consultas e limites
-O agente interpreta perguntas por regras determinísticas, calcula totais e contagens a partir dos registros, aplica filtros por mês/ano e limites monetários, localiza registros e identifica registros mais recentes quando há data válida. Perguntas ambíguas ou fora das regras são sinalizadas sem inventar valores. Quando uma informação não consta nos campos disponíveis, o agente deve dizê-lo explicitamente.
+O ranking de viagens conta PCDPs distintos por favorecido, não linhas de pagamento. O ranking de ordens bancárias usa o valor numérico pago e apresenta OB, favorecido e data. Quando não há identificador suficiente para consultar um campo, o agente pede o identificador em vez de escolher um registro arbitrário.
 
-Nenhum conjunto finito de regras garante a interpretação de toda formulação possível. A bateria de testes cobre casos críticos e deve ser ampliada sempre que forem detectadas perguntas novas. A fonte continua sendo a base pública de produção, consultada somente para leitura; a interface e as regras ficam neste repositório de teste.
+## Auditoria
+O workflow valida a sintaxe e executa `tests/quality.test.cjs`. A bateria verifica os totais dos oito conjuntos, top 10 OBs, última OB, quem mais viajou, lista de viajantes, contagem de PCDPs, limite monetário, inventário de campos e comportamento para perguntas sem dados suficientes.
 
-## Publicação e testes
-O workflow `.github/workflows/pages.yml` valida sintaxe, integridade dos dados e testes funcionais antes de publicar o ambiente de teste no GitHub Pages.
+A aprovação comprova os cenários explicitamente testados, não garante matematicamente qualquer formulação futura. Perguntas reais novas devem ser incorporadas à bateria.
