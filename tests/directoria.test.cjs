@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
-const DATA_URL='https://raw.githubusercontent.com/DanielBrasilIOC/brasil/main/data.json';
+const DATA_URL='https://raw.githubusercontent.com/DanielBrasilIOC/brasil/agente-teste/data.json';
 const els={status:{textContent:''},answer:{textContent:'',hidden:true},q:{value:'',addEventListener(){}},ask:{addEventListener(){}}};
 const document={getElementById:id=>els[id],querySelectorAll:()=>[]};
 const norm=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
