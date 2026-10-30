@@ -196,7 +196,7 @@ function exactPaymentAnswer(raw){
  if(matches.length){
   return 'Sim. Identifiquei '+matches.length+' pagamento(s) de exatamente '+brl(target)+' para '+person+':\n'+matches.map(r=>'• OB '+(r.ob||'não informada')+' — '+dateLabel(r)+' — '+brl(money(r.valor))).join('\n')+'\n\nRegistros do favorecido analisados: '+personRows.length+'.\n'+source(d);
  }
- return 'Não identifiquei pagamento de exatamente '+brl(target)+' para '+person+' na base consultada.\nRegistros do favorecido analisados: '+personRows.length+'.\n'+source(d);
+ return 'Não. Não identifiquei pagamento de exatamente '+brl(target)+' para '+person+' na base consultada.\nRegistros do favorecido analisados: '+personRows.length+'.\n'+source(d);
 }
 function answer(q0){
  const raw=String(q0??''),q=compact(raw);
