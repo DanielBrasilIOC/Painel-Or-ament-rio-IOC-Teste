@@ -704,6 +704,92 @@ body:has(#details[data-dataset]:not([data-dataset="visao"])) .leadership{display
 .leadership-member strong{display:block;margin-bottom:5px;color:#294b60;font-size:12px;line-height:1.45}
 .leadership-member span{display:block;color:var(--m);font-size:11px;line-height:1.5}
 @media(max-width:700px){.leadership{padding:15px}.leadership-team{grid-template-columns:minmax(0,1fr)}.leadership-director strong{font-size:16px}}
+
+/* PADRAO VISUAL INSTITUCIONAL — alinhado ao Monitoramento de Sistemas */
+:root{--n:#123b5b;--b:#286486;--t:#39877f;--m:#657b89;--bg:#f2f6f9;--l:#dce6ed;--r:#ad4545;--w:#9a6b1d;--shadow:0 9px 28px rgba(18,59,91,.075);--radius:16px}
+html{scroll-behavior:smooth}
+body{background:#f2f6f9;color:#243b4c;font-family:Inter,"Segoe UI",system-ui,Arial,sans-serif}
+.shell{grid-template-columns:248px minmax(0,1fr);gap:0;background:#f2f6f9}
+aside{background:linear-gradient(160deg,#123956 0%,#174b6b 58%,#1c5a72 100%);padding:24px 16px;gap:22px;box-shadow:5px 0 24px rgba(17,48,70,.08)}
+.brand{padding:8px 7px 16px;border-bottom:1px solid rgba(255,255,255,.16);align-items:center}
+.mark{width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);font-size:13px;letter-spacing:.4px}
+.brand h1{font-size:13px;line-height:1.35;letter-spacing:.1px}
+.brand p{font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:#c0d6e2}
+.nav{gap:7px}
+.nav button,.nav>a{display:flex;align-items:center;gap:10px;width:100%;padding:12px 13px;border-radius:11px;color:#dce9f0;background:transparent;text-decoration:none;font:600 12px/1.35 Inter,system-ui,Arial;border:1px solid transparent;transition:background .18s,border-color .18s}
+.nav button.active,.nav button:hover,.nav>a:hover,.nav>a:focus-visible{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.12);color:#fff}
+.nav button.active{box-shadow:inset 3px 0 #79c6b8}
+.nav-monitoramento:before{color:#8bd2c2}
+.side{font-size:10px;line-height:1.7;color:#c0d6e2;border-color:rgba(255,255,255,.18)}
+main{padding:28px clamp(16px,3vw,42px) 34px;min-width:0;max-width:1800px;width:100%;margin:0 auto}
+.top{position:relative;overflow:hidden;isolation:isolate;display:flex;align-items:center;justify-content:space-between;min-height:136px;margin:0 0 20px;padding:25px 28px;border-radius:18px;background:linear-gradient(112deg,#123b5b 0%,#1c5876 66%,#287c7b 100%);box-shadow:0 12px 30px rgba(18,59,91,.16);color:#fff}
+.top:after{content:"";position:absolute;z-index:-1;width:260px;height:260px;right:-65px;top:-135px;border:1px solid rgba(255,255,255,.13);border-radius:50%;box-shadow:0 0 0 28px rgba(255,255,255,.035),0 0 0 58px rgba(255,255,255,.025)}
+.ey{color:#a9d9d1;font-size:10px;letter-spacing:1.5px}
+.top h2{color:#fff;font-size:clamp(22px,2.5vw,30px);letter-spacing:-.6px;margin:7px 0 3px}
+.top .sub,.top .last-updated{color:#d4e5ed}
+.top .actions .btn{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)}
+.status{border:1px solid #d0e9dc;background:#e8f5ee;color:#287455;font-weight:700;padding:7px 12px}
+.source{border-radius:14px;border-color:#d5e4eb;background:linear-gradient(110deg,#eaf3f7,#f7fafb);box-shadow:0 4px 14px rgba(18,59,91,.035)}
+.kpis{gap:13px;margin-bottom:18px}
+.kpi,.panel{border:1px solid #dce6ed;border-radius:16px;background:#fff;box-shadow:var(--shadow)}
+.kpi{padding:17px 18px;min-height:112px;position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 13px 30px rgba(18,59,91,.11)}
+.kpi:after{content:"";position:absolute;right:-22px;bottom:-38px;width:100px;height:100px;border-radius:50%;background:rgba(57,135,127,.055)}
+.label{color:#647b89;font-size:10px;letter-spacing:.65px;text-transform:uppercase;font-weight:800}
+.value{color:#153e5b;font-size:clamp(19px,2vw,26px);letter-spacing:-.4px}
+.hint{font-size:11px}
+.panel{padding:19px;margin-bottom:15px}
+.panel h3{font-size:15px;letter-spacing:-.15px;color:#163e5b}
+.head{align-items:center;margin-bottom:12px}
+.badge{border:1px solid #dce8ee;background:#eff5f8;color:#286486;padding:5px 9px}
+.badge.ok{background:#e8f5ee;color:#287455;border-color:#d1e9dc}
+.badge.w{background:#fff5e4;color:#94651d;border-color:#f1e2c5}
+.badge.r{background:#fff0ef;color:#a34444;border-color:#f0d8d6}
+.btn{border-radius:10px;padding:9px 13px;font-weight:700;transition:filter .15s,transform .15s}
+.btn:hover{filter:brightness(.97);transform:translateY(-1px)}
+select,input{border-radius:10px;min-height:38px}
+.scroll{border:1px solid #e1e9ee;border-radius:12px}
+table{border-collapse:separate;border-spacing:0}
+th{background:#edf4f7!important;color:#36596d!important;font-size:10px!important;text-transform:uppercase;letter-spacing:.45px}
+td,th{border-bottom:1px solid #e8eef2}
+tbody tr:hover{background:#f5fafb}
+.empty{border:1px dashed #d5e2e9;border-radius:12px;background:#f8fbfc;color:#728693}
+.alert{border-radius:12px}
+.foot{margin-top:22px;padding:15px 3px;border-top:1px solid #dce6ed;color:#718391}
+#details{scroll-margin-top:16px}
+#details .panel{box-shadow:var(--shadow)}
+.priority-card,.expense-folder,.stage{border-radius:13px}
+@media(max-width:980px){.shell{grid-template-columns:205px minmax(0,1fr)}aside{padding:18px 12px}main{padding:20px 17px}}
+@media(max-width:700px){
+ .shell{display:block}
+ aside{position:relative;padding:11px 12px 10px;gap:10px;border-radius:0 0 16px 16px;box-shadow:0 5px 18px rgba(18,59,91,.12)}
+ .brand{padding:2px 3px 10px;border-bottom:1px solid rgba(255,255,255,.17)}
+ .mark{width:38px;height:38px;border-radius:11px}
+ .brand h1{font-size:12px}
+ .brand p{margin:2px 0}
+ .nav{display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;padding:1px 0 4px;scrollbar-width:thin}
+ .nav button,.nav>a{flex:0 0 auto;width:auto;min-height:38px;padding:9px 11px;white-space:nowrap;font-size:11px}
+ .side{display:none}
+ main{padding:15px 12px 25px}
+ .top{min-height:0;padding:19px 17px;margin-bottom:14px;border-radius:15px;display:block}
+ .top h2{font-size:22px;line-height:1.2}
+ .top .actions{margin-top:12px}
+ .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .kpi{padding:13px 12px;min-height:96px;border-radius:13px}
+ .label{font-size:9px;line-height:1.35}
+ .value{font-size:18px;overflow-wrap:anywhere}
+ .panel{padding:14px 12px;border-radius:14px;margin-bottom:12px}
+ .head{gap:8px;flex-wrap:wrap}
+ .panel h3{font-size:14px}
+ .scroll{max-width:100%;overflow-x:auto}
+ table{min-width:620px}
+ .filters,.actions{gap:7px}
+ .filters>*{min-width:0;max-width:100%}
+ .foot{font-size:10px}
+}
+@media(max-width:390px){main{padding-left:9px;padding-right:9px}.kpis{grid-template-columns:minmax(0,1fr)}.top{padding:17px 14px}.top h2{font-size:20px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+
 </style><style id="monitoramento-nav-style">.nav-monitoramento{display:flex;align-items:center;gap:9px;min-height:42px;padding:11px 12px;border:1px solid transparent;border-radius:11px;color:#d8e5ed;text-decoration:none;font-size:12px;font-weight:600}.nav-monitoramento:hover{background:#ffffff12;border-color:#ffffff10;transform:translateX(2px);color:#fff}.nav-monitoramento::before{content:"◉";font-size:10px;color:#8ed0c5}@media(max-width:700px){.nav-monitoramento{white-space:nowrap}}</style></head><body><div class="shell"><aside><div class="brand" role="button" tabindex="0" title="Voltar à Visão executiva" aria-label="Voltar à Visão executiva" onclick="show('visao')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();show('visao')}" style="cursor:pointer"><div class="mark" aria-hidden="true">IOC</div><div><h1>Painel Financeiro e Orçamentário IOC</h1><p>Instituto Oswaldo Cruz</p></div></div><div class="nav" id="nav"><a class="nav-monitoramento" href="./monitoramento.html" aria-label="Monitoramento de Sistemas">Monitoramento de Sistemas</a></div><div class="side">Transparência e acompanhamento<br>dos dados financeiros do IOC.</div></aside><main><header class="top"><div><div class="ey">Gestão • Finanças • Orçamento</div><h2 id="title">Painel Financeiro&nbsp;e Orçamentário IOC</h2><p class="sub">Instituto Oswaldo Cruz</p><p class="last-updated" id="dashboardPublishedAt" role="status"><span class="last-updated-dot" aria-hidden="true"></span><strong>Painel atualizado em:</strong> verificando publicação…</p></div><div class="actions"><div class="d1-notice" role="note" aria-label="Aviso sobre a atualização dos dados"><span class="d1-icon" aria-hidden="true">i</span><div><strong>Dados com defasagem de um dia (D-1).</strong></div></div></div></header><section class="leadership" aria-labelledby="leadership-title"><div class="leadership-heading"><div class="leadership-mark" aria-hidden="true">IOC</div><div><h3 id="leadership-title">Direção e equipe institucional</h3><p>Instituto Oswaldo Cruz</p></div></div><div class="leadership-director"><span class="leadership-eyebrow">Diretora eleita · Gestão 2025–2029</span><strong>Tania Cremonini de Araujo-Jorge</strong><span>Diretora do Instituto Oswaldo Cruz</span></div><div class="leadership-team-title">Equipe</div><div class="leadership-team"><div class="leadership-member"><strong>Guilherme de Beaurepaire Pereira da Silva</strong><span>Diretor-executivo</span></div><div class="leadership-member"><strong>Luciana Lopes de Almeida Ribeiro Garzoni</strong><span>Diretora de Pesquisa, Desenvolvimento Tecnológico e Inovação</span></div><div class="leadership-member"><strong>Eduardo de Mello Volotão</strong><span>Diretor de Laboratórios de Referência, Ambulatórios e Coleções Biológicas</span></div><div class="leadership-member"><strong>Norma Cristina Cardoso Brandão</strong><span>Diretora de Ensino e Extensão</span></div></div></section><div class="status" id="status">Carregando dados…</div><section id="overview"><div class="source executive-intro"><strong>Resumo Executivo</strong><div class="desc">Visão consolidada dos principais indicadores financeiros e orçamentários do IOC, reunindo as informações essenciais do painel de forma clara e integrada.</div></div><div class="kpis executive-kpis" id="kpis"></div><div id="integrityAudit" class="hide" aria-hidden="true"></div><div class="panel hide" aria-hidden="true"><div id="execIndicators"></div><div id="ordersSourcePie"></div><div id="sourceCorrelationBody"></div><div id="alerts"></div></div></section><section id="details" class="hide"><div class="kpis" id="detailKpis"></div><div class="panel"><div class="head"><div><h3 id="detailTitle"></h3><p class="desc" id="detailNote"></p></div><button class="btn" id="clearDetail" type="button" style="display:none;flex:0 0 auto">Limpar pesquisa</button></div><div class="filters detail-filters" style="margin:12px 0"><input id="q" style="min-width:260px" placeholder="Pesquisar…"><select id="field"><option value="">Todos os campos</option></select></div><div id="empenhosFilters" class="empenhos-filters" style="display:none;margin:12px 0"><label>Pesquisar empenho ou fornecedor<input id="filterEmpenho" type="search" placeholder="Filtrar por empenho ou fornecedor"></label><button class="btn" id="clearEmpenhosFilters" type="button">Limpar filtro</button></div><div class="ob-filters" id="obFilters" style="margin:12px 0;display:none"><label class="ob-filter-label" for="obFilterField">Escolha o campo para filtrar<select id="obFilterField" aria-label="Campo que deseja filtrar"><option value="favorecido">Favorecido</option><option value="data_pagamento">Data de pagamento</option><option value="valor">Valor</option></select></label><label class="ob-filter-label" for="obFilterValue">Digite o que deseja localizar<input id="obFilterValue" type="search" placeholder="Digite o termo do filtro…" aria-label="Valor a pesquisar"></label></div><div class="repasses-filters" id="repassesFilters" style="display:none;margin:12px 0"><label for="filterProcesso">Processo<input id="filterProcesso" type="search" placeholder="Pesquisar processo"></label><label for="filterNumeroNe">Número da solicitação<input id="filterNumeroNe" type="search" placeholder="Pesquisar número da solicitação"></label><label for="filterFornecedor">Fornecedor<input id="filterFornecedor" type="search" placeholder="Pesquisar fornecedor"></label></div><div id="expenseFolders" class="hide"></div><div class="tiny" id="count"></div><div class="scroll" id="detailTableWrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div></div></section><section id="monitoramentoView" class="hide" aria-label="Monitoramento de Sistemas"><iframe title="Monitoramento de Sistemas Governamentais" src="./monitoramento.html?v=20261031-1422" loading="lazy" style="display:block;width:100%;height:1800px;min-height:1200px;border:0;border-radius:14px;background:#f4f7fa"></iframe></section><footer class="foot"><span class="foot-brand">Instituto Oswaldo Cruz • Painel Financeiro&nbsp;e Orçamentário IOC</span><span class="foot-credit"><strong>Desenvolvimento e Suporte</strong><span>Daniel Moura Brasil · SEGEF-IOC</span></span><span class="foot-version">Versão 2.0</span><span id="updated"></span></footer></main></div><script src="./rap-thermometer.js"></script>
 <script>
 const F=n=>'R$ '+new Intl.NumberFormat('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0),I=n=>new Intl.NumberFormat('pt-BR').format(Number(n)||0),N=v=>{if(typeof v==='number')return Number.isFinite(v)?v:0;let s=String(v??'').trim().replace(/^R\$\s*/,'').replace(/\s/g,'');if(!s)return 0;if(s.includes(','))s=s.replace(/\./g,'').replace(',','.');let n=Number(s);return Number.isFinite(n)?n:0},E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),L=s=>String(s??'').toLocaleLowerCase('pt-BR');let data,active='visao',rows=[];
