@@ -1,11 +1,11 @@
 {
   "environment": "TESTE",
-  "checked_at": "2026-10-30T22:32:24Z",
+  "checked_at": "2026-10-31T12:05:42Z",
   "collector": "monitorar_sistemas.py",
-  "scheduler_status": "EXECUCAO_AGENDADA_CONFIRMADA",
+  "scheduler_status": "AGENDAMENTO_CONFIGURADO_AGUARDANDO_EXECUCAO_AGENDADA",
   "frequency_target_seconds": 1800,
   "schedule_target": "A cada 30 minutos, de segunda a sexta-feira (horário UTC configurado no GitHub Actions)",
-  "last_run_duration_ms": 35686,
+  "last_run_duration_ms": 9404,
   "disclaimer": "Somente endpoints públicos e acesso às páginas oficiais de referência são verificados. Não testa login, transações ou módulos internos. Conteúdo de comunicados não é classificado automaticamente.",
   "systems": [
     {
@@ -15,11 +15,11 @@
       "scope": "Portal público; autenticação, consultas e operações internas não são testadas.",
       "official_info": "https://www.gov.br/tesouronacional/pt-br/siafi/consultas-e-servicos/calendario-disponibilidade-siafi",
       "http_status": 200,
-      "latency_ms": 924,
+      "latency_ms": 912,
       "final_url": "https://siafi.tesouro.gov.br/",
       "status": "ACESSIVEL",
       "detail": "Endpoint público respondeu; isso não comprova autenticação nem funcionamento de módulos internos.",
-      "checked_at": "2026-10-30T22:32:24Z",
+      "checked_at": "2026-10-31T12:05:42Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -37,11 +37,11 @@
       "scope": "Página pública de entrada; módulos autenticados e transações não são testados.",
       "official_info": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
       "http_status": 200,
-      "latency_ms": 3040,
+      "latency_ms": 3053,
       "final_url": "https://contratos.comprasnet.gov.br/login",
       "status": "ACESSIVEL",
       "detail": "Endpoint público respondeu; isso não comprova autenticação nem funcionamento de módulos internos.",
-      "checked_at": "2026-10-30T22:32:24Z",
+      "checked_at": "2026-10-31T12:05:42Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -59,11 +59,11 @@
       "scope": "Portal público; login, sessão de disputa e operações internas não são testados.",
       "official_info": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
       "http_status": 200,
-      "latency_ms": 581,
+      "latency_ms": 577,
       "final_url": "https://www.gov.br/compras/pt-br",
       "status": "ACESSIVEL",
       "detail": "Endpoint público respondeu; isso não comprova autenticação nem funcionamento de módulos internos.",
-      "checked_at": "2026-10-30T22:32:24Z",
+      "checked_at": "2026-10-31T12:05:42Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -81,11 +81,11 @@
       "scope": "Página pública informativa; acesso autenticado e funcionalidades internas do SICAF não são testados.",
       "official_info": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
       "http_status": 200,
-      "latency_ms": 582,
+      "latency_ms": 571,
       "final_url": "https://www.gov.br/compras/pt-br/sistemas/conheca-o-compras/sicaf-digital",
       "status": "ACESSIVEL",
       "detail": "Endpoint público respondeu; isso não comprova autenticação nem funcionamento de módulos internos.",
-      "checked_at": "2026-10-30T22:32:24Z",
+      "checked_at": "2026-10-31T12:05:42Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -97,46 +97,24 @@
       }
     },
     {
-      "id": "pncp",
-      "name": "PNCP",
-      "url": "https://pncp.gov.br/app/area-de-trabalho",
-      "scope": "Portal público; APIs, autenticação e operações de publicação não são testadas.",
-      "official_info": "https://www.gov.br/pncp/pt-br/central-de-conteudo/comunicados/comunicados",
-      "http_status": null,
-      "latency_ms": 901,
-      "final_url": null,
-      "status": "NAO_VERIFICADO",
-      "detail": "Falha ao confirmar a conexão pública (ConnectionResetError); pode ser bloqueio de rede ou falha transitória, não prova indisponibilidade do sistema.",
-      "checked_at": "2026-10-30T22:32:24Z",
-      "failure_streak": 0,
-      "alert_state": "SEM_ALERTA",
-      "operational": {
-        "status": "NAO_VERIFICADO_AUTOMATICAMENTE",
-        "source_url": "https://www.gov.br/pncp/pt-br/central-de-conteudo/comunicados/comunicados",
-        "http_status": 200,
-        "source_page_status": "ACESSIVEL",
-        "detail": "A página oficial de referência foi testada quanto ao acesso. O conteúdo dos avisos não é interpretado automaticamente; ausência de aviso não significa ausência de manutenção. Operação autenticada não é testada."
-      }
-    },
-    {
-      "id": "transferegov",
-      "name": "Transferegov.br",
-      "url": "https://portal.transferegov.sistema.gov.br/",
-      "scope": "Portal público; autenticação e operações internas não são testadas.",
-      "official_info": "https://www.gov.br/transferegov/pt-br",
+      "id": "govbr",
+      "name": "gov.br",
+      "url": "https://www.gov.br/",
+      "scope": "Portal público; autenticação e serviços internos não são testados.",
+      "official_info": "https://www.gov.br/pt-br",
       "http_status": 200,
-      "latency_ms": 970,
-      "final_url": "https://portal.transferegov.sistema.gov.br/",
+      "latency_ms": 1142,
+      "final_url": "https://www.gov.br/pt-br",
       "status": "ACESSIVEL",
       "detail": "Endpoint público respondeu; isso não comprova autenticação nem funcionamento de módulos internos.",
-      "checked_at": "2026-10-30T22:32:24Z",
+      "checked_at": "2026-10-31T12:05:42Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
         "status": "NAO_VERIFICADO_AUTOMATICAMENTE",
-        "source_url": "https://www.gov.br/transferegov/pt-br",
-        "http_status": null,
-        "source_page_status": "INDISPONIVEL",
+        "source_url": "https://www.gov.br/pt-br",
+        "http_status": 200,
+        "source_page_status": "ACESSIVEL",
         "detail": "A página oficial de referência foi testada quanto ao acesso. O conteúdo dos avisos não é interpretado automaticamente; ausência de aviso não significa ausência de manutenção. Operação autenticada não é testada."
       }
     }
@@ -183,6 +161,13 @@
       "accessible": 5,
       "instability": 0,
       "not_verified": 1
+    },
+    {
+      "checked_at": "2026-10-31T12:05:42Z",
+      "duration_ms": 9404,
+      "accessible": 5,
+      "instability": 0,
+      "not_verified": 0
     }
   ],
   "alerts": []
