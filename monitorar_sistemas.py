@@ -145,17 +145,17 @@ def main():
         elif result["status"]=="INSTABILIDADE" and streak>=2: alert_state="FALHA_ALERTADA"
         elif result["status"]=="NAO_VERIFICADO": alert_state=prev.get("alert_state","SEM_ALERTA")
         else: alert_state="SEM_ALERTA"
-        matches=find_notices(spec,notice_html) if spec["id"] in ("contratos","compras","sicaf","govbr") else []
+        matches=find_notices(spec,notice_html) if spec["id"] in ("contratos","compras","sicaf") else []
         auth_ok=auth["status"]=="ACESSIVEL"
         operational_status="ENTRADA_PUBLICA_ACESSIVEL" if auth_ok else "ENTRADA_PUBLICA_COM_FALHA"
         systems.append({**spec,**result,"checked_at":now,"failure_streak":streak,"alert_state":alert_state,
           "authentication":{"status":operational_status,"http_status":auth["http_status"],"latency_ms":auth["latency_ms"],
              "latency_status":auth["latency_status"],"url":spec["auth_url"],
              "detail":"A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."},
-          "operational":{"status":"AVISO_RELEVANTE_ENCONTRADO" if matches else "SEM_AVISO_RELEVANTE_IDENTIFICADO",
+          "operational":{"status":"AVISO_PUBLICO_IDENTIFICADO" if matches else ("SEM_AVISO_IDENTIFICADO_NA_FONTE" if spec["id"] in ("contratos","compras","sicaf") else "FONTE_OFICIAL_INFORMATIVA_SEM_FEED_DE_AVISOS"),
              "source_url":spec["official_info"],"http_status":info["http_status"],
              "source_page_status":"ACESSIVEL" if info["status"]=="ACESSIVEL" else "NAO_ACESSIVEL",
-             "notices":matches,"detail":"Comunicados públicos são identificados por palavras-chave; a vigência e o impacto precisam ser confirmados no comunicado. Ausência de resultado não prova ausência de manutenção."},
+             "notices":matches,"detail":"Para Compras, Contratos e SICAF, títulos de comunicados públicos são identificados por palavras-chave; o aviso pode ser histórico e sua vigência/impacto devem ser confirmados no comunicado. Para os demais sistemas, a referência oficial consultada não é um feed de incidentes. Ausência de aviso não prova ausência de manutenção."},
           "functional":{"status":"NAO_TESTADO_SEM_AUTENTICACAO",
              "detail":"Consultas, gravações, transações, integrações, módulos internos e desempenho após login não são testados. Exigem ambiente de homologação e autorização do órgão."}})
     duration=round((time.monotonic()-started)*1000)
