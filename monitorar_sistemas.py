@@ -16,6 +16,7 @@ SYSTEMS = [
  {"id":"compras","name":"Compras.gov.br","url":"https://www.gov.br/compras/pt-br","scope":"Portal público; login, sessão de disputa e operações internas não são testados.","official_info":"https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados"},
  {"id":"sicaf","name":"SICAF","url":"https://www.gov.br/compras/pt-br/sistemas/conheca-o-compras/sicaf-digital","scope":"Página pública informativa; acesso autenticado e funcionalidades internas do SICAF não são testados.","official_info":"https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados"},
  {"id":"govbr","name":"gov.br","url":"https://www.gov.br/","scope":"Portal público; autenticação e serviços internos não são testados.","official_info":"https://www.gov.br/pt-br"},
+ {"id":"cadin","name":"CADIN","url":"https://cadin.pgfn.gov.br/#/home","scope":"Portal público de acesso; consulta de registros exige identificação e autenticação gov.br. Este monitoramento não consulta dados cadastrais nem testa funcionalidades autenticadas.","official_info":"https://www.gov.br/pgfn/pt-br/servicos/orgaos-publicos-e-parceiros/cadin/conheca-o-cadin"},
 ]
 
 def probe(url):
