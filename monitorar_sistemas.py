@@ -27,7 +27,7 @@ def probe(url):
             final=res.geturl()
         ms=round((time.monotonic()-start)*1000)
         status = "ACESSIVEL" if 200 <= code < 400 else ("INSTABILIDADE" if code >= 500 else "NAO_VERIFICADO")
-        detail = "Endpoint público respondeu; isso não comprova autenticação nem funcionamento de módulos internos." if status == "ACESSIVEL" else ("Servidor retornou erro HTTP 5xx." if status == "INSTABILIDADE" else "Endpoint respondeu com HTTP não conclusivo; não classificado como indisponibilidade.")
+        detail = "Sistema Governamental" if status == "ACESSIVEL" else ("Servidor retornou erro HTTP 5xx." if status == "INSTABILIDADE" else "Endpoint respondeu com HTTP não conclusivo; não classificado como indisponibilidade.")
         return {"http_status":code,"latency_ms":ms,"final_url":final,"status":status,"detail":detail}
     except urllib.error.HTTPError as e:
         ms=round((time.monotonic()-start)*1000)
