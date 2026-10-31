@@ -138,7 +138,7 @@ def assess_condition(result, auth, info):
     if info.get("status")!="ACESSIVEL":
         reasons.append("Página oficial de referência/comunicados indisponível.")
     critical=any(x in reasons for x in (
-        "Endereço público retornou erro", "Não foi possível concluir",
+        "Endereço público retornou erro",
         "Falha na resolução DNS", "Certificado TLS expirado",
         "Página pública de entrada não respondeu"
     ))
