@@ -114,6 +114,39 @@ def probe(url):
         _PROBE_CACHE[url] = _probe(url)
     return dict(_PROBE_CACHE[url])
 
+def assess_condition(result, auth, info):
+    reasons=[]
+    if result.get("status")=="INSTABILIDADE":
+        reasons.append("Endereço público retornou erro HTTP 5xx.")
+    elif result.get("status")=="NAO_VERIFICADO":
+        reasons.append("Não foi possível concluir a verificação HTTP.")
+    if result.get("dns",{}).get("status")=="FALHA":
+        reasons.append("Falha na resolução DNS.")
+    tls=result.get("tls",{})
+    if tls.get("status")=="EXPIRADO":
+        reasons.append("Certificado TLS expirado.")
+    elif tls.get("status")=="VENCIMENTO_PROXIMO":
+        reasons.append("Certificado TLS próximo do vencimento.")
+    elif tls.get("status")=="NAO_VERIFICADO":
+        reasons.append("Validade do certificado TLS não pôde ser confirmada.")
+    if auth.get("status")!="ACESSIVEL":
+        reasons.append("Página pública de entrada não respondeu normalmente.")
+    if result.get("latency_status") in ("LENTA","MUITO_LENTA"):
+        reasons.append("Tempo de resposta acima do limite de referência.")
+    if result.get("content_status")=="CONTEUDO_LIMITADO":
+        reasons.append("Resposta com conteúdo limitado; pode ser característica do portal.")
+    if info.get("status")!="ACESSIVEL":
+        reasons.append("Página oficial de referência/comunicados indisponível.")
+    critical=any(x in reasons for x in (
+        "Endereço público retornou erro", "Não foi possível concluir",
+        "Falha na resolução DNS", "Certificado TLS expirado",
+        "Página pública de entrada não respondeu"
+    ))
+    warning=bool(reasons)
+    return {"status":"CRITICO" if critical else ("ATENCAO" if warning else "NORMAL"),
+            "reasons":reasons or ["Verificações externas dentro dos limites definidos."],
+            "detail":"Classificação baseada somente em sinais públicos; não representa confirmação de funcionamento interno."}
+
 def main():
     old={}
     if STATE.exists():
@@ -148,7 +181,24 @@ def main():
         matches=find_notices(spec,notice_html) if spec["id"] in ("contratos","compras","sicaf") else []
         auth_ok=auth["status"]=="ACESSIVEL"
         operational_status="ENTRADA_PUBLICA_ACESSIVEL" if auth_ok else "ENTRADA_PUBLICA_COM_FALHA"
-        systems.append({**spec,**result,"checked_at":now,"failure_streak":streak,"alert_state":alert_state,
+        condition=assess_condition(result,auth,info)
+        prev_condition=prev.get("condition",{})
+        prev_level=prev_condition.get("status","NORMAL")
+        if condition["status"]!="NORMAL":
+            condition["since"]=prev_condition.get("since",now) if prev_level!="NORMAL" else now
+            condition["duration_seconds"]=max(0,int((datetime.fromisoformat(now.replace("Z","+00:00"))-datetime.fromisoformat(condition["since"].replace("Z","+00:00"))).total_seconds()))
+            if prev_level=="NORMAL":
+                alerts.append({"created_at":now,"system":spec["name"],"type":"CONDICAO_DE_ATENCAO" if condition["status"]=="ATENCAO" else "CONDICAO_CRITICA","message":f"{spec['name']}: {condition['status'].lower()} — {'; '.join(condition['reasons'])}"})
+        else:
+            condition["since"]=None
+            condition["duration_seconds"]=0
+            if prev_level!="NORMAL":
+                since=prev_condition.get("since")
+                seconds=0
+                if since:
+                    seconds=max(0,int((datetime.fromisoformat(now.replace("Z","+00:00"))-datetime.fromisoformat(since.replace("Z","+00:00"))).total_seconds()))
+                alerts.append({"created_at":now,"system":spec["name"],"type":"CONDICAO_NORMALIZADA","duration_seconds":seconds,"message":f"{spec['name']}: verificações externas normalizadas após {seconds//60} min."})
+        systems.append({**spec,**result,"condition":condition,"checked_at":now,"failure_streak":streak,"alert_state":alert_state,
           "authentication":{"status":operational_status,"http_status":auth["http_status"],"latency_ms":auth["latency_ms"],
              "latency_status":auth["latency_status"],"url":spec["auth_url"],
              "detail":"A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."},
@@ -160,16 +210,16 @@ def main():
              "detail":"Consultas, gravações, transações, integrações, módulos internos e desempenho após login não são testados. Exigem ambiente de homologação e autorização do órgão."}})
     duration=round((time.monotonic()-started)*1000)
     history=list(old.get("history",[]))
-    counts={"accessible":sum(s["status"]=="ACESSIVEL" for s in systems),"instability":sum(s["status"]=="INSTABILIDADE" for s in systems),"not_verified":sum(s["status"]=="NAO_VERIFICADO" for s in systems)}
+    counts={"accessible":sum(s["status"]=="ACESSIVEL" for s in systems),"instability":sum(s["status"]=="INSTABILIDADE" for s in systems),"not_verified":sum(s["status"]=="NAO_VERIFICADO" for s in systems),"critical":sum(s.get("condition",{}).get("status")=="CRITICO" for s in systems),"attention":sum(s.get("condition",{}).get("status")=="ATENCAO" for s in systems),"normal":sum(s.get("condition",{}).get("status")=="NORMAL" for s in systems)}
     history.append({"checked_at":now,"duration_ms":duration,**counts})
     scheduled=os.environ.get("GITHUB_EVENT_NAME")=="schedule"
-    state={"environment":"TESTE","checked_at":now,"collector":"monitorar_sistemas.py","monitoring_version":"2.0",
+    state={"environment":"TESTE","checked_at":now,"collector":"monitorar_sistemas.py","monitoring_version":"2.1",
       "scheduler_status":"EXECUCAO_AGENDADA_CONFIRMADA" if scheduled else "AGENDAMENTO_CONFIGURADO_AGUARDANDO_EXECUCAO_AGENDADA",
       "frequency_target_seconds":1800,"schedule_target":"A cada 30 minutos, de segunda a sexta-feira (cron UTC 09:00–22:30; aproximadamente 06:00–19:30 em Brasília)",
       "last_run_duration_ms":duration,
       "disclaimer":"Verifica DNS, TLS, HTTP, conteúdo básico, latência, páginas públicas de entrada e comunicados públicos. Não envia credenciais, não autentica e não executa transações. HTTP 200 ou tela de login acessível não comprovam funcionamento interno.",
       "notices_source":{"url":NOTICES_URL,"http_status":notices_result.get("http_status"),"status":notices_result.get("status")},
-      "systems":systems,"history":history[-100:],"alerts":alerts[-100:]}
+      "systems":systems,"history":history[-100:],"alerts":alerts[-100:],"classification_legend":{"NORMAL":"Indicadores públicos dentro dos limites definidos","ATENCAO":"Sinal que merece acompanhamento; pode ser transitório","CRITICO":"Falha externa relevante detectada; não comprova indisponibilidade interna"}}
     STATE.write_text(json.dumps(state,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({"checked_at":now,"duration_ms":duration,"counts":counts,"scheduler_status":state["scheduler_status"],"systems":len(systems)},ensure_ascii=False))
 if __name__=="__main__": main()
