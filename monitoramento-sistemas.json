@@ -117,6 +117,28 @@
         "source_page_status": "ACESSIVEL",
         "detail": "A página oficial de referência foi testada quanto ao acesso. O conteúdo dos avisos não é interpretado automaticamente; ausência de aviso não significa ausência de manutenção. Operação autenticada não é testada."
       }
+    },
+    {
+      "id": "cadin",
+      "name": "CADIN",
+      "url": "https://cadin.pgfn.gov.br/#/home",
+      "scope": "Portal público de acesso; consulta de registros exige identificação e autenticação gov.br. Este monitoramento não consulta dados cadastrais nem testa funcionalidades autenticadas.",
+      "official_info": "https://www.gov.br/pgfn/pt-br/servicos/orgaos-publicos-e-parceiros/cadin/conheca-o-cadin",
+      "http_status": null,
+      "latency_ms": null,
+      "final_url": null,
+      "status": "NAO_VERIFICADO",
+      "detail": "Sistema Governamental",
+      "checked_at": null,
+      "failure_streak": 0,
+      "alert_state": "SEM_ALERTA",
+      "operational": {
+        "status": "NAO_VERIFICADO_AUTOMATICAMENTE",
+        "source_url": "https://www.gov.br/pgfn/pt-br/servicos/orgaos-publicos-e-parceiros/cadin/conheca-o-cadin",
+        "http_status": null,
+        "source_page_status": "NAO_VERIFICADO",
+        "detail": "Aguardando a primeira coleta do endpoint público. A consulta de registros exige identificação gov.br e não é realizada por este monitoramento."
+      }
     }
   ],
   "history": [
