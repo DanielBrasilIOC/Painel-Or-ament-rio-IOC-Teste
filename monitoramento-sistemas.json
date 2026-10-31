@@ -1,143 +1,477 @@
 {
   "environment": "TESTE",
-  "checked_at": "2026-10-31T14:01:41Z",
+  "checked_at": "2026-10-31T14:10:21Z",
   "collector": "monitorar_sistemas.py",
+  "monitoring_version": "2.0",
   "scheduler_status": "AGENDAMENTO_CONFIGURADO_AGUARDANDO_EXECUCAO_AGENDADA",
   "frequency_target_seconds": 1800,
-  "schedule_target": "A cada 30 minutos, de segunda a sexta-feira (horário UTC configurado no GitHub Actions)",
-  "last_run_duration_ms": 9624,
-  "disclaimer": "Somente endpoints públicos e acesso às páginas oficiais de referência são verificados. Não testa login, transações ou módulos internos. Conteúdo de comunicados não é classificado automaticamente.",
+  "schedule_target": "A cada 30 minutos, de segunda a sexta-feira (cron UTC 09:00–22:30; aproximadamente 06:00–19:30 em Brasília)",
+  "last_run_duration_ms": 39503,
+  "disclaimer": "Verifica DNS, TLS, HTTP, conteúdo básico, latência, páginas públicas de entrada e comunicados públicos. Não envia credenciais, não autentica e não executa transações. HTTP 200 ou tela de login acessível não comprovam funcionamento interno.",
+  "notices_source": {
+    "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
+    "http_status": 200,
+    "status": "ACESSIVEL"
+  },
   "systems": [
     {
       "id": "siafi",
       "name": "SIAFI",
       "url": "https://siafi.tesouro.gov.br/",
-      "scope": "Portal público; autenticação, consultas e operações internas não são testadas.",
+      "auth_url": "https://siafi.tesouro.gov.br/senha/public/pages/security/login.jsf",
+      "scope": "Portal e página pública de entrada; não autentica nem executa operações.",
       "official_info": "https://www.gov.br/tesouronacional/pt-br/siafi/consultas-e-servicos/calendario-disponibilidade-siafi",
+      "keywords": [
+        "siafi",
+        "tesouro"
+      ],
       "http_status": 200,
-      "latency_ms": 628,
+      "latency_ms": 611,
+      "latency_status": "NORMAL",
       "final_url": "https://siafi.tesouro.gov.br/",
+      "content_type": "text/html",
+      "page_title": "",
+      "content_status": "CONTEUDO_LIMITADO",
+      "body_bytes_checked": 79,
+      "dns": {
+        "status": "RESOLVIDO",
+        "addresses": [
+          "189.9.11.96"
+        ]
+      },
+      "tls": {
+        "status": "VALIDO",
+        "days_remaining": 160,
+        "expires_at": "2027-04-10T13:28:25Z"
+      },
       "status": "ACESSIVEL",
-      "detail": "Sistema Governamental",
-      "checked_at": "2026-10-31T14:01:41Z",
+      "detail": "Resposta HTTP recebida; verificação não comprova operação autenticada.",
+      "checked_at": "2026-10-31T14:10:21Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
+      "authentication": {
+        "status": "ENTRADA_PUBLICA_ACESSIVEL",
+        "http_status": 200,
+        "latency_ms": 826,
+        "latency_status": "NORMAL",
+        "url": "https://siafi.tesouro.gov.br/senha/public/pages/security/login.jsf",
+        "detail": "A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."
+      },
       "operational": {
-        "status": "NAO_VERIFICADO_AUTOMATICAMENTE",
+        "status": "SEM_AVISO_RELEVANTE_IDENTIFICADO",
         "source_url": "https://www.gov.br/tesouronacional/pt-br/siafi/consultas-e-servicos/calendario-disponibilidade-siafi",
         "http_status": 200,
         "source_page_status": "ACESSIVEL",
-        "detail": "A página oficial de referência foi testada quanto ao acesso. O conteúdo dos avisos não é interpretado automaticamente; ausência de aviso não significa ausência de manutenção. Operação autenticada não é testada."
+        "notices": [],
+        "detail": "Comunicados públicos são identificados por palavras-chave; a vigência e o impacto precisam ser confirmados no comunicado. Ausência de resultado não prova ausência de manutenção."
+      },
+      "functional": {
+        "status": "NAO_TESTADO_SEM_AUTENTICACAO",
+        "detail": "Consultas, gravações, transações, integrações, módulos internos e desempenho após login não são testados. Exigem ambiente de homologação e autorização do órgão."
       }
     },
     {
       "id": "contratos",
       "name": "Contratos.gov.br",
       "url": "https://contratos.comprasnet.gov.br/login",
-      "scope": "Página pública de entrada; módulos autenticados e transações não são testados.",
+      "auth_url": "https://contratos.comprasnet.gov.br/login",
+      "scope": "Página pública de entrada; módulos autenticados e transações não são executados.",
       "official_info": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
+      "keywords": [
+        "contratos",
+        "compras"
+      ],
       "http_status": 200,
-      "latency_ms": 2214,
+      "latency_ms": 3733,
+      "latency_status": "LENTA",
       "final_url": "https://contratos.comprasnet.gov.br/login",
+      "content_type": "text/html; charset=UTF-8",
+      "page_title": "Entrar :: Contratos.gov.br",
+      "content_status": "CONTEUDO_PRESENTE",
+      "body_bytes_checked": 750000,
+      "dns": {
+        "status": "RESOLVIDO",
+        "addresses": [
+          "189.9.177.75"
+        ]
+      },
+      "tls": {
+        "status": "VALIDO",
+        "days_remaining": 31,
+        "expires_at": "2026-12-02T08:51:26Z"
+      },
       "status": "ACESSIVEL",
-      "detail": "Sistema Governamental",
-      "checked_at": "2026-10-31T14:01:41Z",
+      "detail": "Resposta HTTP recebida; verificação não comprova operação autenticada.",
+      "checked_at": "2026-10-31T14:10:21Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
+      "authentication": {
+        "status": "ENTRADA_PUBLICA_ACESSIVEL",
+        "http_status": 200,
+        "latency_ms": 3733,
+        "latency_status": "LENTA",
+        "url": "https://contratos.comprasnet.gov.br/login",
+        "detail": "A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."
+      },
       "operational": {
-        "status": "NAO_VERIFICADO_AUTOMATICAMENTE",
+        "status": "AVISO_RELEVANTE_ENCONTRADO",
         "source_url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
         "http_status": 200,
         "source_page_status": "ACESSIVEL",
-        "detail": "A página oficial de referência foi testada quanto ao acesso. O conteúdo dos avisos não é interpretado automaticamente; ausência de aviso não significa ausência de manutenção. Operação autenticada não é testada."
+        "notices": [
+          {
+            "title": "Nº 45/26 - Manutenção programada no sistema Contratos.gov.br entre os dias 26 e 27 de outubro",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/comunicados_2026/no-45-26-manutencao-programada-no-sistema-contratos-gov-br-entre-os-dias-26-e-27-de-outubro"
+          },
+          {
+            "title": "Nº 44/26 - Manutenção programada no sistema Contratos.gov.br entre os dias 23 e 26 de outubro",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/comunicados_2026/44-26-manutencao-programada-no-sistema-contratos-gov-br-entre-os-dias-23-e-26-de-outubro"
+          },
+          {
+            "title": "Nº 30/26 - Indisponibilidade programada dos sistemas Compras.gov.br, Sicaf, Contratos.gov.br, SCDP, Siads, PNCP e Contrata+Brasil entre 25 e 27 de julho",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-30-26-indisponibilidade-programada-dos-sistemas-compras-gov-br-sicaf-contratos-gov-br-scdp-siads-pncp-e-contrata-brasil-entre-25-e-27-de-julho"
+          },
+          {
+            "title": "Nº 18/26 - Instabilidade no Módulo de Contratos da API de Dados Abertos",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-18-26-instabilidade-no-modulo-de-contratos-da-api-de-dados-abertos"
+          },
+          {
+            "title": "Nº 08/26 - Indisponibilidade programada no ambiente de produção dos sistemas Compras.gov.br e Contratos Gov.br",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-08-26-indisponibilidade-programada-no-ambiente-de-producao-dos-sistemas-compras-gov-br-e-contratos-gov.br"
+          },
+          {
+            "title": "Nº 45/25 - Indisponibilidade nos ambientes de treinamento e de produção do sistema Contratos gov.br",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2025/n-o-45-25-indisponibilidade-nos-ambientes-de-treinamento-e-de-producao-do-sistema-contratos-gov.br"
+          }
+        ],
+        "detail": "Comunicados públicos são identificados por palavras-chave; a vigência e o impacto precisam ser confirmados no comunicado. Ausência de resultado não prova ausência de manutenção."
+      },
+      "functional": {
+        "status": "NAO_TESTADO_SEM_AUTENTICACAO",
+        "detail": "Consultas, gravações, transações, integrações, módulos internos e desempenho após login não são testados. Exigem ambiente de homologação e autorização do órgão."
       }
     },
     {
       "id": "compras",
       "name": "Compras.gov.br",
       "url": "https://www.gov.br/compras/pt-br",
-      "scope": "Portal público; login, sessão de disputa e operações internas não são testados.",
+      "auth_url": "https://comprasnet.gov.br/seguro/loginPortalEstrangeiro.asp",
+      "scope": "Portal e página pública de entrada; não autentica nem executa operações.",
       "official_info": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
+      "keywords": [
+        "compras",
+        "governo federal"
+      ],
       "http_status": 200,
-      "latency_ms": 408,
+      "latency_ms": 998,
+      "latency_status": "NORMAL",
       "final_url": "https://www.gov.br/compras/pt-br",
+      "content_type": "text/html;charset=utf-8",
+      "page_title": "Compras.gov.br - O maior site de compras públicas do Brasil — Portal de Compras do Governo Federal",
+      "content_status": "CONTEUDO_PRESENTE",
+      "body_bytes_checked": 255944,
+      "dns": {
+        "status": "RESOLVIDO",
+        "addresses": [
+          "161.148.164.31",
+          "2804:151:3:2:161:148:164:31"
+        ]
+      },
+      "tls": {
+        "status": "VALIDO",
+        "days_remaining": 77,
+        "expires_at": "2027-01-17T13:46:23Z"
+      },
       "status": "ACESSIVEL",
-      "detail": "Sistema Governamental",
-      "checked_at": "2026-10-31T14:01:41Z",
+      "detail": "Resposta HTTP recebida; verificação não comprova operação autenticada.",
+      "checked_at": "2026-10-31T14:10:21Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
+      "authentication": {
+        "status": "ENTRADA_PUBLICA_ACESSIVEL",
+        "http_status": 200,
+        "latency_ms": 1350,
+        "latency_status": "NORMAL",
+        "url": "https://comprasnet.gov.br/seguro/loginPortalEstrangeiro.asp",
+        "detail": "A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."
+      },
       "operational": {
-        "status": "NAO_VERIFICADO_AUTOMATICAMENTE",
+        "status": "AVISO_RELEVANTE_ENCONTRADO",
         "source_url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
         "http_status": 200,
         "source_page_status": "ACESSIVEL",
-        "detail": "A página oficial de referência foi testada quanto ao acesso. O conteúdo dos avisos não é interpretado automaticamente; ausência de aviso não significa ausência de manutenção. Operação autenticada não é testada."
+        "notices": [
+          {
+            "title": "Nº 42/26 - Instabilidade no Sistema Compras.gov.br em 28/09/2026",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-42-26-instabilidade-no-sistema-compras-gov-br-em-28-09-2026"
+          },
+          {
+            "title": "Nº 35/26 - Indisponibilidade programada no ambiente de produção do Compras.gov.br",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-35-26-indisponibilidade-programada-no-ambiente-de-producao-do-compras-gov.br"
+          },
+          {
+            "title": "Nº 30/26 - Indisponibilidade programada dos sistemas Compras.gov.br, Sicaf, Contratos.gov.br, SCDP, Siads, PNCP e Contrata+Brasil entre 25 e 27 de julho",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-30-26-indisponibilidade-programada-dos-sistemas-compras-gov-br-sicaf-contratos-gov-br-scdp-siads-pncp-e-contrata-brasil-entre-25-e-27-de-julho"
+          },
+          {
+            "title": "Nº 27/26 - Instabilidade no Sistema Compras.gov.br em 13/7/26",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-27-26-instabilidade-no-sistema-compras-gov-br-em-13-7-26"
+          },
+          {
+            "title": "Nº 26/26 - Instabilidade no envio de informações do sistema Compras.gov.br para a Imprensa Nacional",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-26-26-instabilidade-no-envio-de-informacoes-do-sistema-compras-gov-br-para-a-imprensa-nacional"
+          },
+          {
+            "title": "Nº 24/26 - Indisponibilidade programada no ambiente de produção do sistema Compras.gov.br",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/n-24-26-indisponibilidade-programada-no-sistema-compras-gov.br"
+          },
+          {
+            "title": "Nº 17/26 - Instabilidade no Sistema Compras.gov.br em 28/04/26",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-17-26-instabilidade-no-sistema-compras-gov-br-em-28-04-26"
+          },
+          {
+            "title": "Nº 16/26 – Indisponibilidade programada no Compras.gov.br para implantação do CNPJ alfanumérico no Sicaf",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-16-26-indisponibilidade-programada-no-compras-gov-br-para-implantacao-do-cnpj-alfanumerico-no-sicaf"
+          }
+        ],
+        "detail": "Comunicados públicos são identificados por palavras-chave; a vigência e o impacto precisam ser confirmados no comunicado. Ausência de resultado não prova ausência de manutenção."
+      },
+      "functional": {
+        "status": "NAO_TESTADO_SEM_AUTENTICACAO",
+        "detail": "Consultas, gravações, transações, integrações, módulos internos e desempenho após login não são testados. Exigem ambiente de homologação e autorização do órgão."
       }
     },
     {
       "id": "sicaf",
       "name": "SICAF",
       "url": "https://www.gov.br/compras/pt-br/sistemas/conheca-o-compras/sicaf-digital",
-      "scope": "Página pública informativa; acesso autenticado e funcionalidades internas do SICAF não são testados.",
+      "auth_url": "https://www3.comprasnet.gov.br/",
+      "scope": "Página pública informativa e entrada pública do SICAF; sem autenticação ou operações.",
       "official_info": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
+      "keywords": [
+        "sicaf",
+        "fornecedores"
+      ],
       "http_status": 200,
-      "latency_ms": 407,
+      "latency_ms": 976,
+      "latency_status": "NORMAL",
       "final_url": "https://www.gov.br/compras/pt-br/sistemas/conheca-o-compras/sicaf-digital",
+      "content_type": "text/html;charset=utf-8",
+      "page_title": "SICAF Digital — Portal de Compras do Governo Federal",
+      "content_status": "CONTEUDO_PRESENTE",
+      "body_bytes_checked": 198905,
+      "dns": {
+        "status": "RESOLVIDO",
+        "addresses": [
+          "161.148.164.31",
+          "2804:151:3:2:161:148:164:31"
+        ]
+      },
+      "tls": {
+        "status": "VALIDO",
+        "days_remaining": 77,
+        "expires_at": "2027-01-17T13:46:23Z"
+      },
       "status": "ACESSIVEL",
-      "detail": "Sistema Governamental",
-      "checked_at": "2026-10-31T14:01:41Z",
+      "detail": "Resposta HTTP recebida; verificação não comprova operação autenticada.",
+      "checked_at": "2026-10-31T14:10:21Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
+      "authentication": {
+        "status": "ENTRADA_PUBLICA_ACESSIVEL",
+        "http_status": 200,
+        "latency_ms": 821,
+        "latency_status": "NORMAL",
+        "url": "https://www3.comprasnet.gov.br/",
+        "detail": "A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."
+      },
       "operational": {
-        "status": "NAO_VERIFICADO_AUTOMATICAMENTE",
+        "status": "AVISO_RELEVANTE_ENCONTRADO",
         "source_url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
         "http_status": 200,
         "source_page_status": "ACESSIVEL",
-        "detail": "A página oficial de referência foi testada quanto ao acesso. O conteúdo dos avisos não é interpretado automaticamente; ausência de aviso não significa ausência de manutenção. Operação autenticada não é testada."
+        "notices": [
+          {
+            "title": "Nº 32/26 - Falha no Sicaf referente a verificação do quadro societário",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/32-26-falha-no-sicaf-referente-a-verificacao-do-quadro-societario"
+          },
+          {
+            "title": "Nº 30/26 - Indisponibilidade programada dos sistemas Compras.gov.br, Sicaf, Contratos.gov.br, SCDP, Siads, PNCP e Contrata+Brasil entre 25 e 27 de julho",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-30-26-indisponibilidade-programada-dos-sistemas-compras-gov-br-sicaf-contratos-gov-br-scdp-siads-pncp-e-contrata-brasil-entre-25-e-27-de-julho"
+          },
+          {
+            "title": "Nº 20/26 - Instabilidade no Sistema de Cadastro de Fornecedores - Sicaf",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/n-o-20-26-instabilidade-no-sistema-de-cadastro-de-fornecedores-sicaf"
+          },
+          {
+            "title": "Nº 16/26 – Indisponibilidade programada no Compras.gov.br para implantação do CNPJ alfanumérico no Sicaf",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-16-26-indisponibilidade-programada-no-compras-gov-br-para-implantacao-do-cnpj-alfanumerico-no-sicaf"
+          },
+          {
+            "title": "Nº 33/25 - Instabilidade na integração entre Sicaf e FGTS",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2025/n-o-33-25-instabilidade-na-integracao-entre-sicaf-e-fgts"
+          },
+          {
+            "title": "Nº 26/25 - Instabilidade no Sistema de Cadastro de Fornecedores (Sicaf)",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2025/n-o-26-25-instabilidade-no-sistema-de-cadastro-de-fornecedores-sicaf"
+          }
+        ],
+        "detail": "Comunicados públicos são identificados por palavras-chave; a vigência e o impacto precisam ser confirmados no comunicado. Ausência de resultado não prova ausência de manutenção."
+      },
+      "functional": {
+        "status": "NAO_TESTADO_SEM_AUTENTICACAO",
+        "detail": "Consultas, gravações, transações, integrações, módulos internos e desempenho após login não são testados. Exigem ambiente de homologação e autorização do órgão."
       }
     },
     {
       "id": "govbr",
       "name": "gov.br",
       "url": "https://www.gov.br/",
-      "scope": "Portal público; autenticação e serviços internos não são testados.",
+      "auth_url": "https://sso.acesso.gov.br/login",
+      "scope": "Portal e tela pública de entrada do Login Único; nenhuma credencial é enviada.",
       "official_info": "https://www.gov.br/pt-br",
+      "keywords": [
+        "gov.br",
+        "governo"
+      ],
       "http_status": 200,
-      "latency_ms": 805,
+      "latency_ms": 1482,
+      "latency_status": "NORMAL",
       "final_url": "https://www.gov.br/pt-br",
+      "content_type": "text/html;charset=utf-8",
+      "page_title": "GOV.BR",
+      "content_status": "CONTEUDO_PRESENTE",
+      "body_bytes_checked": 140582,
+      "dns": {
+        "status": "RESOLVIDO",
+        "addresses": [
+          "161.148.164.31",
+          "2804:151:3:2:161:148:164:31"
+        ]
+      },
+      "tls": {
+        "status": "VALIDO",
+        "days_remaining": 77,
+        "expires_at": "2027-01-17T13:46:23Z"
+      },
       "status": "ACESSIVEL",
-      "detail": "Sistema Governamental",
-      "checked_at": "2026-10-31T14:01:41Z",
+      "detail": "Resposta HTTP recebida; verificação não comprova operação autenticada.",
+      "checked_at": "2026-10-31T14:10:21Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
+      "authentication": {
+        "status": "ENTRADA_PUBLICA_ACESSIVEL",
+        "http_status": 200,
+        "latency_ms": 2619,
+        "latency_status": "LENTA",
+        "url": "https://sso.acesso.gov.br/login",
+        "detail": "A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."
+      },
       "operational": {
-        "status": "NAO_VERIFICADO_AUTOMATICAMENTE",
+        "status": "AVISO_RELEVANTE_ENCONTRADO",
         "source_url": "https://www.gov.br/pt-br",
         "http_status": 200,
         "source_page_status": "ACESSIVEL",
-        "detail": "A página oficial de referência foi testada quanto ao acesso. O conteúdo dos avisos não é interpretado automaticamente; ausência de aviso não significa ausência de manutenção. Operação autenticada não é testada."
+        "notices": [
+          {
+            "title": "Nº 45/26 - Manutenção programada no sistema Contratos.gov.br entre os dias 26 e 27 de outubro",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/comunicados_2026/no-45-26-manutencao-programada-no-sistema-contratos-gov-br-entre-os-dias-26-e-27-de-outubro"
+          },
+          {
+            "title": "Nº 44/26 - Manutenção programada no sistema Contratos.gov.br entre os dias 23 e 26 de outubro",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/comunicados_2026/44-26-manutencao-programada-no-sistema-contratos-gov-br-entre-os-dias-23-e-26-de-outubro"
+          },
+          {
+            "title": "Nº 42/26 - Instabilidade no Sistema Compras.gov.br em 28/09/2026",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-42-26-instabilidade-no-sistema-compras-gov-br-em-28-09-2026"
+          },
+          {
+            "title": "Nº 35/26 - Indisponibilidade programada no ambiente de produção do Compras.gov.br",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-35-26-indisponibilidade-programada-no-ambiente-de-producao-do-compras-gov.br"
+          },
+          {
+            "title": "Nº 30/26 - Indisponibilidade programada dos sistemas Compras.gov.br, Sicaf, Contratos.gov.br, SCDP, Siads, PNCP e Contrata+Brasil entre 25 e 27 de julho",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-30-26-indisponibilidade-programada-dos-sistemas-compras-gov-br-sicaf-contratos-gov-br-scdp-siads-pncp-e-contrata-brasil-entre-25-e-27-de-julho"
+          },
+          {
+            "title": "Nº 27/26 - Instabilidade no Sistema Compras.gov.br em 13/7/26",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-27-26-instabilidade-no-sistema-compras-gov-br-em-13-7-26"
+          },
+          {
+            "title": "Nº 26/26 - Instabilidade no envio de informações do sistema Compras.gov.br para a Imprensa Nacional",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/no-26-26-instabilidade-no-envio-de-informacoes-do-sistema-compras-gov-br-para-a-imprensa-nacional"
+          },
+          {
+            "title": "Nº 24/26 - Indisponibilidade programada no ambiente de produção do sistema Compras.gov.br",
+            "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados/2026/n-24-26-indisponibilidade-programada-no-sistema-compras-gov.br"
+          }
+        ],
+        "detail": "Comunicados públicos são identificados por palavras-chave; a vigência e o impacto precisam ser confirmados no comunicado. Ausência de resultado não prova ausência de manutenção."
+      },
+      "functional": {
+        "status": "NAO_TESTADO_SEM_AUTENTICACAO",
+        "detail": "Consultas, gravações, transações, integrações, módulos internos e desempenho após login não são testados. Exigem ambiente de homologação e autorização do órgão."
       }
     },
     {
       "id": "cadin",
       "name": "CADIN",
       "url": "https://cadin.pgfn.gov.br/#/home",
-      "scope": "Portal público de acesso; consulta de registros exige identificação e autenticação gov.br. Este monitoramento não consulta dados cadastrais nem testa funcionalidades autenticadas.",
-      "official_info": "https://www.gov.br/pgfn/pt-br/servicos/orgaos-publicos-e-parceiros/cadin/conheca-o-cadin",
+      "auth_url": "https://cadin.pgfn.gov.br/",
+      "scope": "Portal e entrada pública do CADIN; não consulta registros nem acessa área autenticada.",
+      "official_info": "https://www.gov.br/pgfn/pt-br/servicos/perguntas-frequentes/perguntas-frequentes-sobre-o-cadin-pgfn",
+      "keywords": [
+        "cadin",
+        "pgfn"
+      ],
       "http_status": 200,
-      "latency_ms": 2611,
+      "latency_ms": 1693,
+      "latency_status": "NORMAL",
       "final_url": "https://cadin.pgfn.gov.br/#/home",
+      "content_type": "text/html",
+      "page_title": "CADIN",
+      "content_status": "CONTEUDO_PRESENTE",
+      "body_bytes_checked": 61325,
+      "dns": {
+        "status": "RESOLVIDO",
+        "addresses": [
+          "189.9.113.41",
+          "189.9.113.42",
+          "189.9.113.43",
+          "189.9.113.44",
+          "189.9.113.45",
+          "189.9.113.46"
+        ]
+      },
+      "tls": {
+        "status": "VALIDO",
+        "days_remaining": 58,
+        "expires_at": "2026-12-28T18:27:23Z"
+      },
       "status": "ACESSIVEL",
-      "detail": "Sistema Governamental",
-      "checked_at": "2026-10-31T14:01:41Z",
+      "detail": "Resposta HTTP recebida; verificação não comprova operação autenticada.",
+      "checked_at": "2026-10-31T14:10:21Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
+      "authentication": {
+        "status": "ENTRADA_PUBLICA_ACESSIVEL",
+        "http_status": 200,
+        "latency_ms": 1635,
+        "latency_status": "NORMAL",
+        "url": "https://cadin.pgfn.gov.br/",
+        "detail": "A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."
+      },
       "operational": {
-        "status": "NAO_VERIFICADO_AUTOMATICAMENTE",
-        "source_url": "https://www.gov.br/pgfn/pt-br/servicos/orgaos-publicos-e-parceiros/cadin/conheca-o-cadin",
+        "status": "SEM_AVISO_RELEVANTE_IDENTIFICADO",
+        "source_url": "https://www.gov.br/pgfn/pt-br/servicos/perguntas-frequentes/perguntas-frequentes-sobre-o-cadin-pgfn",
         "http_status": 200,
         "source_page_status": "ACESSIVEL",
-        "detail": "A página oficial de referência foi testada quanto ao acesso. O conteúdo dos avisos não é interpretado automaticamente; ausência de aviso não significa ausência de manutenção. Operação autenticada não é testada."
+        "notices": [],
+        "detail": "Comunicados públicos são identificados por palavras-chave; a vigência e o impacto precisam ser confirmados no comunicado. Ausência de resultado não prova ausência de manutenção."
+      },
+      "functional": {
+        "status": "NAO_TESTADO_SEM_AUTENTICACAO",
+        "detail": "Consultas, gravações, transações, integrações, módulos internos e desempenho após login não são testados. Exigem ambiente de homologação e autorização do órgão."
       }
     }
   ],
@@ -194,6 +528,13 @@
     {
       "checked_at": "2026-10-31T14:01:41Z",
       "duration_ms": 9624,
+      "accessible": 6,
+      "instability": 0,
+      "not_verified": 0
+    },
+    {
+      "checked_at": "2026-10-31T14:10:21Z",
+      "duration_ms": 39503,
       "accessible": 6,
       "instability": 0,
       "not_verified": 0
