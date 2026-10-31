@@ -1,0 +1,11 @@
+{
+  "servicos": [
+    {
+      "nome": "gov.br",
+      "url": "https://www.gov.br/",
+      "categoria": "Serviço público federal",
+      "ativo": true,
+      "monitorar": true
+    }
+  ]
+}
