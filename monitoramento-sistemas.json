@@ -1,11 +1,11 @@
 {
   "environment": "TESTE",
-  "checked_at": "2026-10-31T12:05:42Z",
+  "checked_at": "2026-10-31T14:01:41Z",
   "collector": "monitorar_sistemas.py",
   "scheduler_status": "AGENDAMENTO_CONFIGURADO_AGUARDANDO_EXECUCAO_AGENDADA",
   "frequency_target_seconds": 1800,
   "schedule_target": "A cada 30 minutos, de segunda a sexta-feira (horário UTC configurado no GitHub Actions)",
-  "last_run_duration_ms": 9404,
+  "last_run_duration_ms": 9624,
   "disclaimer": "Somente endpoints públicos e acesso às páginas oficiais de referência são verificados. Não testa login, transações ou módulos internos. Conteúdo de comunicados não é classificado automaticamente.",
   "systems": [
     {
@@ -15,11 +15,11 @@
       "scope": "Portal público; autenticação, consultas e operações internas não são testadas.",
       "official_info": "https://www.gov.br/tesouronacional/pt-br/siafi/consultas-e-servicos/calendario-disponibilidade-siafi",
       "http_status": 200,
-      "latency_ms": 912,
+      "latency_ms": 628,
       "final_url": "https://siafi.tesouro.gov.br/",
       "status": "ACESSIVEL",
       "detail": "Sistema Governamental",
-      "checked_at": "2026-10-31T12:05:42Z",
+      "checked_at": "2026-10-31T14:01:41Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -37,11 +37,11 @@
       "scope": "Página pública de entrada; módulos autenticados e transações não são testados.",
       "official_info": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
       "http_status": 200,
-      "latency_ms": 3053,
+      "latency_ms": 2214,
       "final_url": "https://contratos.comprasnet.gov.br/login",
       "status": "ACESSIVEL",
       "detail": "Sistema Governamental",
-      "checked_at": "2026-10-31T12:05:42Z",
+      "checked_at": "2026-10-31T14:01:41Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -59,11 +59,11 @@
       "scope": "Portal público; login, sessão de disputa e operações internas não são testados.",
       "official_info": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
       "http_status": 200,
-      "latency_ms": 577,
+      "latency_ms": 408,
       "final_url": "https://www.gov.br/compras/pt-br",
       "status": "ACESSIVEL",
       "detail": "Sistema Governamental",
-      "checked_at": "2026-10-31T12:05:42Z",
+      "checked_at": "2026-10-31T14:01:41Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -81,11 +81,11 @@
       "scope": "Página pública informativa; acesso autenticado e funcionalidades internas do SICAF não são testados.",
       "official_info": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
       "http_status": 200,
-      "latency_ms": 571,
+      "latency_ms": 407,
       "final_url": "https://www.gov.br/compras/pt-br/sistemas/conheca-o-compras/sicaf-digital",
       "status": "ACESSIVEL",
       "detail": "Sistema Governamental",
-      "checked_at": "2026-10-31T12:05:42Z",
+      "checked_at": "2026-10-31T14:01:41Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -103,11 +103,11 @@
       "scope": "Portal público; autenticação e serviços internos não são testados.",
       "official_info": "https://www.gov.br/pt-br",
       "http_status": 200,
-      "latency_ms": 1142,
+      "latency_ms": 805,
       "final_url": "https://www.gov.br/pt-br",
       "status": "ACESSIVEL",
       "detail": "Sistema Governamental",
-      "checked_at": "2026-10-31T12:05:42Z",
+      "checked_at": "2026-10-31T14:01:41Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
@@ -124,20 +124,20 @@
       "url": "https://cadin.pgfn.gov.br/#/home",
       "scope": "Portal público de acesso; consulta de registros exige identificação e autenticação gov.br. Este monitoramento não consulta dados cadastrais nem testa funcionalidades autenticadas.",
       "official_info": "https://www.gov.br/pgfn/pt-br/servicos/orgaos-publicos-e-parceiros/cadin/conheca-o-cadin",
-      "http_status": null,
-      "latency_ms": null,
-      "final_url": null,
-      "status": "NAO_VERIFICADO",
+      "http_status": 200,
+      "latency_ms": 2611,
+      "final_url": "https://cadin.pgfn.gov.br/#/home",
+      "status": "ACESSIVEL",
       "detail": "Sistema Governamental",
-      "checked_at": null,
+      "checked_at": "2026-10-31T14:01:41Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "operational": {
         "status": "NAO_VERIFICADO_AUTOMATICAMENTE",
         "source_url": "https://www.gov.br/pgfn/pt-br/servicos/orgaos-publicos-e-parceiros/cadin/conheca-o-cadin",
-        "http_status": null,
-        "source_page_status": "NAO_VERIFICADO",
-        "detail": "Aguardando a primeira coleta do endpoint público. A consulta de registros exige identificação gov.br e não é realizada por este monitoramento."
+        "http_status": 200,
+        "source_page_status": "ACESSIVEL",
+        "detail": "A página oficial de referência foi testada quanto ao acesso. O conteúdo dos avisos não é interpretado automaticamente; ausência de aviso não significa ausência de manutenção. Operação autenticada não é testada."
       }
     }
   ],
@@ -188,6 +188,13 @@
       "checked_at": "2026-10-31T12:05:42Z",
       "duration_ms": 9404,
       "accessible": 5,
+      "instability": 0,
+      "not_verified": 0
+    },
+    {
+      "checked_at": "2026-10-31T14:01:41Z",
+      "duration_ms": 9624,
+      "accessible": 6,
       "instability": 0,
       "not_verified": 0
     }
