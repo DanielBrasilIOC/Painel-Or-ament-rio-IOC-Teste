@@ -23,14 +23,40 @@
 <script>
 (function(){
  var message=document.getElementById('monitor-message');
+ var finished=false;
+ function showError(text){
+   if(finished)return;
+   finished=true;
+   message.className='error';
+   message.textContent=text;
+ }
+ window.addEventListener('error',function(event){
+   if(event.filename && event.filename.indexOf('monitoramento-sistemas.js')!==-1){
+     showError('O módulo foi localizado, mas apresentou um erro ao executar. Detalhe: '+(event.message||'erro de JavaScript')+'.');
+   }
+ });
+ window.addEventListener('unhandledrejection',function(event){
+   showError('Falha inesperada ao iniciar o monitoramento: '+String(event.reason||'erro não identificado'));
+ });
  var script=document.createElement('script');
- script.src='./monitoramento-sistemas.js?v=20261031-1848-fallback';
+ script.src='./monitoramento-sistemas.js?v=20261031-1855-diagnostico';
  script.async=false;
  script.onerror=function(){
-   message.className='error';
-   message.textContent='Não foi possível carregar o módulo do monitoramento. O painel não recebeu o arquivo JavaScript. Atualize a página ou tente novamente mais tarde.';
+   showError('Não foi possível baixar monitoramento-sistemas.js. Verifique a publicação do arquivo no GitHub Pages.');
+ };
+ script.onload=function(){
+   window.setTimeout(function(){
+     if(!document.getElementById('iocGovMonitor')){
+       showError('O arquivo JavaScript foi baixado, mas não iniciou o painel. A execução foi interrompida antes da renderização.');
+     }
+   },1500);
  };
  document.body.appendChild(script);
+ window.setTimeout(function(){
+   if(!finished && !document.getElementById('iocGovMonitor')){
+     showError('O carregamento excedeu o tempo esperado. O painel não iniciou; tente recarregar e, se persistir, envie esta mensagem para diagnóstico.');
+   }
+ },10000);
 })();
 </script>
 <noscript><p class="error">Ative o JavaScript para visualizar os dados atualizados do monitoramento.</p></noscript>
