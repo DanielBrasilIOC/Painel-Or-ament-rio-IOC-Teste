@@ -10,7 +10,7 @@ from urllib.parse import urlparse, urljoin
 
 ROOT = Path(__file__).resolve().parent
 STATE = ROOT / "monitoramento-sistemas.json"
-TIMEOUT = 20
+TIMEOUT = 10
 MAX_BODY = 750_000
 UA = "IOC-Test-Monitor/2.0 (+safe-public-service-check; no-auth; no-transactions)"
 GOVBR_SSO = "https://sso.acesso.gov.br/login"
@@ -60,7 +60,7 @@ def tls_check(host, port=443):
     except Exception as e:
         return {"status":"NAO_VERIFICADO","detail":type(e).__name__}
 
-def probe(url):
+def _probe(url):
     parsed=urlparse(url); host=parsed.hostname or ""
     dns=dns_check(host) if host else {"status":"FALHA"}
     tls=tls_check(host,parsed.port or 443) if parsed.scheme=="https" and host else {"status":"NAO_APLICAVEL"}
@@ -107,6 +107,12 @@ def find_notices(spec, html):
         if any(n in low for n in name_terms) and any(t in low for t in terms):
             found.append({"title":title[:240],"url":urljoin(NOTICES_URL,href)})
     return found[:8]
+
+_PROBE_CACHE = {}
+def probe(url):
+    if url not in _PROBE_CACHE:
+        _PROBE_CACHE[url] = _probe(url)
+    return dict(_PROBE_CACHE[url])
 
 def main():
     old={}
