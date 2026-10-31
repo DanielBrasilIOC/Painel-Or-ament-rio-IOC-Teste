@@ -1,1 +1,38 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Monitoramento de Sistemas — IOC</title></head><body><script src="./monitoramento-sistemas.js?v=20261031-1835-diagnosticos"></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07366f">
+<title>Monitoramento de Sistemas — IOC</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#17345d;font:16px Arial,sans-serif}
+#monitor-fallback{max-width:900px;margin:9vh auto;padding:28px 22px;background:#fff;border:1px solid #d7e0ed;border-radius:16px;box-shadow:0 8px 28px #16345d12}
+#monitor-fallback h1{font-size:clamp(22px,4vw,32px);margin:0 0 12px;color:#07366f}
+#monitor-fallback p{line-height:1.5;margin:8px 0}
+#monitor-fallback .hint{color:#53657c;font-size:14px}
+#monitor-fallback .error{color:#a32323;font-weight:700}
+</style>
+</head>
+<body>
+<div id="monitor-fallback" role="status" aria-live="polite">
+<h1>Monitoramento de Sistemas — IOC</h1>
+<p id="monitor-message">Carregando os dados dos sistemas monitorados…</p>
+<p class="hint">Se esta mensagem permanecer, atualize a página. O painel exibirá aqui qualquer falha no carregamento.</p>
+</div>
+<script>
+(function(){
+ var message=document.getElementById('monitor-message');
+ var script=document.createElement('script');
+ script.src='./monitoramento-sistemas.js?v=20261031-1848-fallback';
+ script.async=false;
+ script.onerror=function(){
+   message.className='error';
+   message.textContent='Não foi possível carregar o módulo do monitoramento. O painel não recebeu o arquivo JavaScript. Atualize a página ou tente novamente mais tarde.';
+ };
+ document.body.appendChild(script);
+})();
+</script>
+<noscript><p class="error">Ative o JavaScript para visualizar os dados atualizados do monitoramento.</p></noscript>
+</body>
+</html>
