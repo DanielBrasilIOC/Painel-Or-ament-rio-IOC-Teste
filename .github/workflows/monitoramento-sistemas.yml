@@ -1,4 +1,4 @@
-name: Monitoramento público dos sistemas governamentais (TESTE)
+name: Monitoramento técnico e operacional seguro (TESTE)
 on:
   push:
     branches: [main]
@@ -11,6 +11,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  pages: write
+  id-token: write
 concurrency:
   group: monitoramento-sistemas-teste
   cancel-in-progress: false
@@ -52,3 +54,28 @@ jobs:
             echo "Não foi possível persistir a coleta após três tentativas."
             exit 1
           fi
+
+  publicar:
+    needs: monitorar
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+    environment:
+      name: github-pages
+    steps:
+      - name: Baixar a versão atualizada do ambiente de teste
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Preparar arquivos atualizados do site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: Publicar monitoramento atualizado
+        id: deployment
+        uses: actions/deploy-pages@v4
