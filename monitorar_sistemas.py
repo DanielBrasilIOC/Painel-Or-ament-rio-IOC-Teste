@@ -133,8 +133,6 @@ def assess_condition(result, auth, info):
         reasons.append("Página pública de entrada não respondeu normalmente.")
     if result.get("latency_status") in ("LENTA","MUITO_LENTA"):
         reasons.append("Tempo de resposta acima do limite de referência.")
-    if result.get("content_status")=="CONTEUDO_LIMITADO":
-        reasons.append("Resposta com conteúdo limitado; pode ser característica do portal.")
     if info.get("status")!="ACESSIVEL":
         reasons.append("Página oficial de referência/comunicados indisponível.")
     critical=any(x in reasons for x in (
