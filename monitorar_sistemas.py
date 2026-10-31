@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Monitoramento conservador de endpoints públicos e páginas oficiais de aviso.
-Não autentica nem executa transações nos sistemas monitorados.
+Inclui o portal público do CADIN-PGFN; não autentica nem consulta dados cadastrais.
 """
 import json, os, time, urllib.request, urllib.error
 from datetime import datetime, timezone
