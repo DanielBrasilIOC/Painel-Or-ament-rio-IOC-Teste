@@ -1,12 +1,12 @@
 {
   "environment": "TESTE",
-  "checked_at": "2026-11-19T13:12:40Z",
+  "checked_at": "2026-11-19T14:30:36Z",
   "collector": "monitorar_sistemas.py",
   "monitoring_version": "2.1",
   "scheduler_status": "EXECUCAO_AGENDADA_CONFIRMADA",
   "frequency_target_seconds": 1800,
   "schedule_target": "A cada 30 minutos, de segunda a sexta-feira (cron UTC 09:00–22:30; aproximadamente 06:00–19:30 em Brasília)",
-  "last_run_duration_ms": 25322,
+  "last_run_duration_ms": 30924,
   "disclaimer": "Verifica DNS, TLS, HTTP, conteúdo básico, latência, páginas públicas de entrada e comunicados públicos. Não envia credenciais, não autentica e não executa transações. HTTP 200 ou tela de login acessível não comprovam funcionamento interno.",
   "notices_source": {
     "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/comunicados",
@@ -26,7 +26,7 @@
         "tesouro"
       ],
       "http_status": 200,
-      "latency_ms": 544,
+      "latency_ms": 563,
       "latency_status": "NORMAL",
       "final_url": "https://siafi.tesouro.gov.br/",
       "content_type": "text/html",
@@ -41,7 +41,7 @@
       },
       "tls": {
         "status": "VALIDO",
-        "days_remaining": 142,
+        "days_remaining": 141,
         "expires_at": "2027-04-10T13:28:25Z"
       },
       "status": "ACESSIVEL",
@@ -55,14 +55,14 @@
         "since": null,
         "duration_seconds": 0
       },
-      "checked_at": "2026-11-19T13:12:40Z",
+      "checked_at": "2026-11-19T14:30:36Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "authentication": {
         "status": "ENTRADA_PUBLICA_ACESSIVEL",
         "http_status": 200,
-        "latency_ms": 2178,
-        "latency_status": "LENTA",
+        "latency_ms": 840,
+        "latency_status": "NORMAL",
         "url": "https://siafi.tesouro.gov.br/senha/public/pages/security/login.jsf",
         "detail": "A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."
       },
@@ -91,7 +91,7 @@
         "compras"
       ],
       "http_status": 200,
-      "latency_ms": 3154,
+      "latency_ms": 3109,
       "latency_status": "LENTA",
       "final_url": "https://contratos.comprasnet.gov.br/login",
       "content_type": "text/html; charset=UTF-8",
@@ -118,15 +118,15 @@
         ],
         "detail": "Classificação baseada somente em sinais públicos; não representa confirmação de funcionamento interno.",
         "since": "2026-10-31T14:20:20Z",
-        "duration_seconds": 1637540
+        "duration_seconds": 1642216
       },
-      "checked_at": "2026-11-19T13:12:40Z",
+      "checked_at": "2026-11-19T14:30:36Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "authentication": {
         "status": "ENTRADA_PUBLICA_ACESSIVEL",
         "http_status": 200,
-        "latency_ms": 3154,
+        "latency_ms": 3109,
         "latency_status": "LENTA",
         "url": "https://contratos.comprasnet.gov.br/login",
         "detail": "A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."
@@ -189,7 +189,7 @@
         "governo federal"
       ],
       "http_status": 200,
-      "latency_ms": 976,
+      "latency_ms": 834,
       "latency_status": "NORMAL",
       "final_url": "https://www.gov.br/compras/pt-br",
       "content_type": "text/html;charset=utf-8",
@@ -205,7 +205,7 @@
       },
       "tls": {
         "status": "VALIDO",
-        "days_remaining": 59,
+        "days_remaining": 58,
         "expires_at": "2027-01-17T13:46:23Z"
       },
       "status": "ACESSIVEL",
@@ -219,13 +219,13 @@
         "since": null,
         "duration_seconds": 0
       },
-      "checked_at": "2026-11-19T13:12:40Z",
+      "checked_at": "2026-11-19T14:30:36Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "authentication": {
         "status": "ENTRADA_PUBLICA_ACESSIVEL",
         "http_status": 200,
-        "latency_ms": 547,
+        "latency_ms": 693,
         "latency_status": "NORMAL",
         "url": "https://comprasnet.gov.br/seguro/loginPortalEstrangeiro.asp",
         "detail": "A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."
@@ -288,13 +288,13 @@
         "fornecedores"
       ],
       "http_status": 200,
-      "latency_ms": 833,
+      "latency_ms": 677,
       "latency_status": "NORMAL",
       "final_url": "https://www.gov.br/compras/pt-br/sistemas/conheca-o-compras/sicaf-digital",
       "content_type": "text/html;charset=utf-8",
       "page_title": "SICAF Digital — Portal de Compras do Governo Federal",
       "content_status": "CONTEUDO_PRESENTE",
-      "body_bytes_checked": 199743,
+      "body_bytes_checked": 199705,
       "dns": {
         "status": "RESOLVIDO",
         "addresses": [
@@ -304,7 +304,7 @@
       },
       "tls": {
         "status": "VALIDO",
-        "days_remaining": 59,
+        "days_remaining": 58,
         "expires_at": "2027-01-17T13:46:23Z"
       },
       "status": "ACESSIVEL",
@@ -318,13 +318,13 @@
         "since": null,
         "duration_seconds": 0
       },
-      "checked_at": "2026-11-19T13:12:40Z",
+      "checked_at": "2026-11-19T14:30:36Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "authentication": {
         "status": "ENTRADA_PUBLICA_ACESSIVEL",
         "http_status": 200,
-        "latency_ms": 538,
+        "latency_ms": 785,
         "latency_status": "NORMAL",
         "url": "https://www3.comprasnet.gov.br/",
         "detail": "A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."
@@ -379,13 +379,13 @@
         "governo"
       ],
       "http_status": 200,
-      "latency_ms": 1256,
+      "latency_ms": 1094,
       "latency_status": "NORMAL",
       "final_url": "https://www.gov.br/pt-br",
       "content_type": "text/html;charset=utf-8",
       "page_title": "GOV.BR",
       "content_status": "CONTEUDO_PRESENTE",
-      "body_bytes_checked": 140393,
+      "body_bytes_checked": 140479,
       "dns": {
         "status": "RESOLVIDO",
         "addresses": [
@@ -395,7 +395,7 @@
       },
       "tls": {
         "status": "VALIDO",
-        "days_remaining": 59,
+        "days_remaining": 58,
         "expires_at": "2027-01-17T13:46:23Z"
       },
       "status": "ACESSIVEL",
@@ -409,14 +409,14 @@
         "since": null,
         "duration_seconds": 0
       },
-      "checked_at": "2026-11-19T13:12:40Z",
+      "checked_at": "2026-11-19T14:30:36Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "authentication": {
         "status": "ENTRADA_PUBLICA_ACESSIVEL",
         "http_status": 200,
-        "latency_ms": 1345,
-        "latency_status": "NORMAL",
+        "latency_ms": 2207,
+        "latency_status": "LENTA",
         "url": "https://sso.acesso.gov.br/login",
         "detail": "A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."
       },
@@ -445,7 +445,7 @@
         "pgfn"
       ],
       "http_status": 200,
-      "latency_ms": 651,
+      "latency_ms": 746,
       "latency_status": "NORMAL",
       "final_url": "https://cadin.pgfn.gov.br/#/home",
       "content_type": "text/html",
@@ -479,13 +479,13 @@
         "since": null,
         "duration_seconds": 0
       },
-      "checked_at": "2026-11-19T13:12:40Z",
+      "checked_at": "2026-11-19T14:30:36Z",
       "failure_streak": 0,
       "alert_state": "SEM_ALERTA",
       "authentication": {
         "status": "ENTRADA_PUBLICA_ACESSIVEL",
         "http_status": 200,
-        "latency_ms": 630,
+        "latency_ms": 735,
         "latency_status": "NORMAL",
         "url": "https://cadin.pgfn.gov.br/",
         "detail": "A página pública de entrada respondeu sem envio de credenciais. Login, MFA, perfil, sessão e autorização não foram testados."
@@ -505,16 +505,6 @@
     }
   ],
   "history": [
-    {
-      "checked_at": "2026-11-09T17:52:33Z",
-      "duration_ms": 38770,
-      "accessible": 6,
-      "instability": 0,
-      "not_verified": 0,
-      "critical": 0,
-      "attention": 1,
-      "normal": 5
-    },
     {
       "checked_at": "2026-11-09T18:48:59Z",
       "duration_ms": 40620,
@@ -1498,6 +1488,16 @@
     {
       "checked_at": "2026-11-19T13:12:40Z",
       "duration_ms": 25322,
+      "accessible": 6,
+      "instability": 0,
+      "not_verified": 0,
+      "critical": 0,
+      "attention": 1,
+      "normal": 5
+    },
+    {
+      "checked_at": "2026-11-19T14:30:36Z",
+      "duration_ms": 30924,
       "accessible": 6,
       "instability": 0,
       "not_verified": 0,
